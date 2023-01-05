@@ -14,6 +14,8 @@ namespace BudgetBuddyLibrary
         // Create - returns the number of records affected
         public int Create(StoredProcedureModel storedProcedure, string connectionString)
         {
+            int numRowsAffected = 0;
+
             try
             {
                 using (SqlConnection connection = new SqlConnection(connectionString))
@@ -24,7 +26,7 @@ namespace BudgetBuddyLibrary
 
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.AddRange(storedProcedure.SqlParameterList.ToArray());
-                        cmd.ExecuteNonQuery();
+                        numRowsAffected = cmd.ExecuteNonQuery();
                     }
                 }
             }
@@ -33,7 +35,7 @@ namespace BudgetBuddyLibrary
                 throw;
             }
 
-            return 0;
+            return numRowsAffected;
         }
 
         // Read

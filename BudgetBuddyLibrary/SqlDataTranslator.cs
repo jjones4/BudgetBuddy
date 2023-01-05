@@ -11,7 +11,7 @@ namespace BudgetBuddyLibrary
 {
     public class SqlDataTranslator : ISqlDataTranslator
     {
-        public void AddNewUserToBudgetDataDb(UserModel userToAdd, string connectionString)
+        public int AddNewUserToBudgetDataDb(UserModel userToAdd, string connectionString)
         {
             SqlDataAccess sqlDataAccess= new SqlDataAccess();
 
@@ -32,7 +32,9 @@ namespace BudgetBuddyLibrary
                 }
             };
 
-            sqlDataAccess.Create(storedProcedure, connectionString);
+            int numRowsAffected = sqlDataAccess.Create(storedProcedure, connectionString);
+
+            return numRowsAffected;
         }
     }
 }
