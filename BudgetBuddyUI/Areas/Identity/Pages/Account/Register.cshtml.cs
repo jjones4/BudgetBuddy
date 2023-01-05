@@ -19,6 +19,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using BudgetBuddyLibrary;
+using BudgetBuddyLibrary.Models;
 
 namespace BudgetBuddyUI.Areas.Identity.Pages.Account
 {
@@ -30,13 +32,15 @@ namespace BudgetBuddyUI.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<ApplicationUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
+        private readonly IConfiguration _config;
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
             IUserStore<ApplicationUser> userStore,
             SignInManager<ApplicationUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            IConfiguration config)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -44,6 +48,7 @@ namespace BudgetBuddyUI.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _config = config;
         }
 
         /// <summary>
@@ -129,6 +134,21 @@ namespace BudgetBuddyUI.Areas.Identity.Pages.Account
                     _logger.LogInformation("User created a new account with password.");
 
                     var userId = await _userManager.GetUserIdAsync(user);
+
+                    // Add the username (email) and userId to [dbo].[Users] so the user can
+                    // create budgets in the BudgetDataDb
+                    string userName = user.Email;
+
+                    SqlDataTranslator sqlDataTranslator = new SqlDataTranslator();
+                    UserModel newUser = new UserModel()
+                    {
+                        UserName = userName,
+                        AspNetUserId = userId
+                    };
+
+                    sqlDataTranslator.AddNewUserToBudgetDataDb(newUser, 
+                        _config.GetConnectionString("BudgetDataDbConnectionString"));
+
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
                     var callbackUrl = Url.Page(
