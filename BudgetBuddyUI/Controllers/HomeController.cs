@@ -1,5 +1,7 @@
-﻿using BudgetBuddyUI.Models;
+﻿using BudgetBuddyUI.Areas.Identity.Data;
+using BudgetBuddyUI.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -8,15 +10,19 @@ namespace BudgetBuddyUI.Controllers
     [Authorize]
     public class HomeController : Controller
     {
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(UserManager<ApplicationUser> userManager, ILogger<HomeController> logger)
         {
+            _userManager = userManager;
             _logger = logger;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            var userId = await _userManager.GetUserIdAsync(await _userManager.GetUserAsync(User));
+
             return View();
         }
 
