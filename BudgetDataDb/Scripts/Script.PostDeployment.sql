@@ -74,7 +74,9 @@ BEGIN
 		ON DELETE CASCADE,
 		CONSTRAINT FK_BudgetName_UserBudgetNameBudgetNameId FOREIGN KEY (BudgetNameId)
 		REFERENCES BudgetNames (Id)
-		ON DELETE CASCADE
+		ON DELETE CASCADE,
+		IsDefaultBudget bit,
+		Threshhold money
 	);
 
 	DECLARE @BudgetNameId1 int;
