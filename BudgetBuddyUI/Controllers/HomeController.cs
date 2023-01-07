@@ -21,6 +21,8 @@ namespace BudgetBuddyUI.Controllers
 
         public async Task<IActionResult> Index()
         {
+            // Figure out who is logged in, and get the AspNetUserId for identifying the user
+            // in the BudgetDataDb
             var userId = await _userManager.GetUserIdAsync(await _userManager.GetUserAsync(User));
 
             return View();
