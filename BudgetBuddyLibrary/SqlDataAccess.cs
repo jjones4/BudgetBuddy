@@ -39,9 +39,45 @@ namespace BudgetBuddyLibrary
         }
 
         // Read
-        public List<List<object>> Read(StoredProcedureModel storedProcedure, string connectionString)
+        public List<object[]> Read<T>(StoredProcedureModel storedProcedure, string connectionString)
         {
-            return new List<List<object>>();
+            List<object[]> output = new List<object[]>();
+
+            Type t = typeof(T);
+            int numFields = t.GetProperties().Count();
+
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand(storedProcedure.NameOfStoredProcedure, connection))
+                    {
+                        object[] fields = new object[numFields];
+                        connection.Open();
+
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddRange(storedProcedure.SqlParameterList.ToArray());
+
+                        SqlDataReader dr = cmd.ExecuteReader();
+
+                        if (dr.HasRows)
+                        {
+                            while (dr.Read())
+                            {
+                                dr.GetValues(fields);
+
+                                output.Add(fields);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return output;
         }
 
         // Update - returns the number of records affected

@@ -1,4 +1,6 @@
-﻿using BudgetBuddyUI.Areas.Identity.Data;
+﻿using BudgetBuddyLibrary;
+using BudgetBuddyLibrary.Models;
+using BudgetBuddyUI.Areas.Identity.Data;
 using BudgetBuddyUI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -11,11 +13,15 @@ namespace BudgetBuddyUI.Controllers
     public class HomeController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IConfiguration _config;
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(UserManager<ApplicationUser> userManager, ILogger<HomeController> logger)
+        public HomeController(UserManager<ApplicationUser> userManager,
+            IConfiguration config,
+            ILogger<HomeController> logger)
         {
             _userManager = userManager;
+            _config = config;
             _logger = logger;
         }
 
@@ -23,7 +29,20 @@ namespace BudgetBuddyUI.Controllers
         {
             // Figure out who is logged in, and get the AspNetUserId for identifying the user
             // in the BudgetDataDb
-            var userId = await _userManager.GetUserIdAsync(await _userManager.GetUserAsync(User));
+            var aspNetUserId = await _userManager.GetUserIdAsync(await _userManager.GetUserAsync(User));
+
+            UserModel loggedInUser = new UserModel()
+            {
+                AspNetUserId = aspNetUserId
+            };
+
+            SqlDataTranslator sqlDataTranslator = new SqlDataTranslator();
+
+            // Get the logged in user's Id from the BudgetDataDb
+            int loggedInUserId = sqlDataTranslator.GetUserIdByAspNetUserId(loggedInUser,
+                _config.GetConnectionString("BudgetDataDbConnectionString"));
+
+
 
             return View();
         }

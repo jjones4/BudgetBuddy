@@ -66,5 +66,6 @@
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Stored Procedures\spUsers_AddNewUserToBudgetDataDb.sql" />
+    <Build Include="dbo\Stored Procedures\spUsers_GetUserIdByAspNetUserId.sql" />
   </ItemGroup>
 </Project>

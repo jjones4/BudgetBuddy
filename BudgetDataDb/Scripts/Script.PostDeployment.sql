@@ -75,7 +75,7 @@ BEGIN
 		CONSTRAINT FK_BudgetName_UserBudgetNameBudgetNameId FOREIGN KEY (BudgetNameId)
 		REFERENCES BudgetNames (Id)
 		ON DELETE CASCADE,
-		IsDefaultBudget bit,
+		IsDefaultBudget bit NOT NULL,
 		Threshhold money
 	);
 
@@ -89,13 +89,13 @@ BEGIN
 
 	INSERT INTO
 		[dbo].[UsersBudgetNames]
-		(UserId, BudgetNameId)
+		(UserId, BudgetNameId, IsDefaultBudget, Threshhold)
 	VALUES
-		(@UserId1, @BudgetNameId1),
-		(@UserId1, @BudgetNameId2),
-		(@UserId2, @BudgetNameId1),
-		(@UserId2, @BudgetNameId3),
-		(@UserId3, @BudgetNameId2);
+		(@UserId1, @BudgetNameId1, 1, NULL),
+		(@UserId1, @BudgetNameId2, 0, NULL),
+		(@UserId2, @BudgetNameId1, 0, NULL),
+		(@UserId2, @BudgetNameId3, 0, NULL),
+		(@UserId3, @BudgetNameId2, 0, NULL);
 
 	CREATE TABLE [dbo].[TemplateNames]
 	(

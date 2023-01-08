@@ -11,7 +11,7 @@ namespace BudgetBuddyLibrary
     {
         public int Create(StoredProcedureModel storedProcedure, string connectionString);
 
-        public List<List<object>> Read(StoredProcedureModel storedProcedure, string connectionString);
+        public List<object[]> Read<T>(StoredProcedureModel storedProcedure, string connectionString);
 
         public int Update(StoredProcedureModel storedProcedure, string connectionString);
 
