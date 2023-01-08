@@ -31,18 +31,17 @@ namespace BudgetBuddyUI.Controllers
             // in the BudgetDataDb
             var aspNetUserId = await _userManager.GetUserIdAsync(await _userManager.GetUserAsync(User));
 
-            UserModel loggedInUser = new UserModel()
-            {
-                AspNetUserId = aspNetUserId
-            };
-
             SqlDataTranslator sqlDataTranslator = new SqlDataTranslator();
 
             // Get the logged in user's Id from the BudgetDataDb
-            int loggedInUserId = sqlDataTranslator.GetUserIdByAspNetUserId(loggedInUser,
+            int loggedInUserId = sqlDataTranslator.GetUserIdByAspNetUserId(aspNetUserId,
                 _config.GetConnectionString("BudgetDataDbConnectionString"));
 
-
+            // Now, based on the logged in user Id, we need to get the default
+            // budget, if any, from the UsersBudgetNames table
+            List<UsersBudgetNamesModel> usersBudgetNames =
+                sqlDataTranslator.GetUsersBudgetNamesRowsByUserId(loggedInUserId,
+                _config.GetConnectionString("BudgetDataDbConnectionString"));
 
             return View();
         }

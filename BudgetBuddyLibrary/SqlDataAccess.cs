@@ -52,7 +52,6 @@ namespace BudgetBuddyLibrary
                 {
                     using (SqlCommand cmd = new SqlCommand(storedProcedure.NameOfStoredProcedure, connection))
                     {
-                        object[] fields = new object[numFields];
                         connection.Open();
 
                         cmd.CommandType = CommandType.StoredProcedure;
@@ -64,6 +63,8 @@ namespace BudgetBuddyLibrary
                         {
                             while (dr.Read())
                             {
+                                object[] fields = new object[numFields];
+
                                 dr.GetValues(fields);
 
                                 output.Add(fields);

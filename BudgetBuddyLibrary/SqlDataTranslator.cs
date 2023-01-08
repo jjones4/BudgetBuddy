@@ -37,10 +37,8 @@ namespace BudgetBuddyLibrary
             return numRowsAffected;
         }
 
-        public int GetUserIdByAspNetUserId(UserModel user, string connectionString)
+        public int GetUserIdByAspNetUserId(string aspNetUserId, string connectionString)
         {
-            int id = 0;
-
             SqlDataAccess sqlDataAccess = new SqlDataAccess();
 
             StoredProcedureModel storedProcedure = new StoredProcedureModel()
@@ -51,7 +49,7 @@ namespace BudgetBuddyLibrary
                 {
                     new SqlParameter("@AspNetUserId", SqlDbType.NVarChar)
                     {
-                        Value = user.AspNetUserId
+                        Value = aspNetUserId
                     }
                 }
             };
@@ -74,6 +72,55 @@ namespace BudgetBuddyLibrary
             // There should only be one user that is returned
             // since AspNetUserId should be unique
             return users.First().Id;
+        }
+
+        public List<UsersBudgetNamesModel> GetUsersBudgetNamesRowsByUserId(int userId, string connectionString)
+        {
+            SqlDataAccess sqlDataAccess = new SqlDataAccess();
+
+            StoredProcedureModel storedProcedure = new StoredProcedureModel()
+            {
+                NameOfStoredProcedure = "dbo.spUsersBudgetNames_GetAllRowsForGivenUserId",
+
+                SqlParameterList = new List<SqlParameter>()
+                {
+                    new SqlParameter("@UserId", SqlDbType.Int)
+                    {
+                        Value = userId
+                    }
+                }
+            };
+
+            List<object[]> rawSqlRows = sqlDataAccess.Read<UsersBudgetNamesModel>(storedProcedure, connectionString);
+            List<UsersBudgetNamesModel> usersBudgetNames = new List<UsersBudgetNamesModel>();
+
+            foreach (object[] row in rawSqlRows)
+            {
+                if (row[4] is DBNull)
+                {
+                    usersBudgetNames.Add(new UsersBudgetNamesModel()
+                    {
+                        Id = (int)row[0],
+                        UserId = (int)row[1],
+                        BudgetNameId = (int)row[2],
+                        IsDefaultBudget = (bool)row[3],
+                        Threshhold = null
+                    });
+                }
+                else
+                {
+                    usersBudgetNames.Add(new UsersBudgetNamesModel()
+                    {
+                        Id = (int)row[0],
+                        UserId = (int)row[1],
+                        BudgetNameId = (int)row[2],
+                        IsDefaultBudget = (bool)row[3],
+                        Threshhold = (decimal)row[4]
+                    });
+                }
+            }
+
+            return usersBudgetNames;
         }
     }
 }
