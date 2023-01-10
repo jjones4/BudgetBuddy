@@ -46,17 +46,76 @@ namespace BudgetBuddyUI.Controllers
                 _config.GetConnectionString("BudgetDataDbConnectionString"));
 
             int defaultBudgetId = DefaultBudget.GetDefaultBudgetId(usersBudgetNames);
-
-            List<LineItemModel> defaultLineItems;
-
+            
             // If there is a default budget, get the line items
             // If there is not a default budget, don't go to the database,
-            // and also leave the list empty so we can check this in the UI
+            // and also leave the list empty so we can check this later
             if (defaultBudgetId > 0)
             {
+                List<LineItemModel> defaultLineItems;
+
                 defaultLineItems = 
                     sqlDataTranslator.GetLineItemsByUserBudgetId(defaultBudgetId,
                     _config.GetConnectionString("BudgetDataDbConnectionString"));
+
+                List<LineItemModel> creditLineItems = 
+                    defaultLineItems.Where(x => x.IsCredit == true).ToList();
+                List<PartialOverviewLineModel> creditPartialOverview = 
+                    OverviewCalculator.SumsByMonth(creditLineItems);
+
+                List<LineItemModel> debitLineItems = 
+                    defaultLineItems.Where(x => x.IsCredit == false).ToList();
+                List<PartialOverviewLineModel> debitPartialOverview = 
+                    OverviewCalculator.SumsByMonth(debitLineItems);
+
+                // Get the unique month/year date combinations found in user's budget
+                List<DateTime> uniqueMonthsYears =
+                    defaultLineItems.Select(d => new DateTime(d.DateOfTransaction.Year, d.DateOfTransaction.Month, 1))
+                    .Distinct()
+                    .ToList();
+
+                List<MonthlySummaryModel> monthlySummaries = new List<MonthlySummaryModel>();
+
+                foreach (DateTime monthYear in uniqueMonthsYears)
+                {
+                    MonthlySummaryModel tempMonthlySummary = new MonthlySummaryModel();
+
+                    tempMonthlySummary.MonthName = monthYear.Month.ToString();
+                    tempMonthlySummary.YearOfTransaction = monthYear.Year;
+
+                    if (creditPartialOverview
+                        .Where(x => x.Month == monthYear.Month && x.YearOfTransaction == monthYear.Year)
+                        .FirstOrDefault() == null)
+                    {
+                        tempMonthlySummary.IncomeAmount = 0;
+                    }
+                    else
+                    {
+                        tempMonthlySummary.IncomeAmount = 
+                            creditPartialOverview
+                            .Where(x => x.Month == monthYear.Month && x.YearOfTransaction == monthYear.Year)
+                            .FirstOrDefault()
+                            .AmountOfTransactions;
+                    }
+
+                    if (debitPartialOverview
+                        .Where(x => x.Month == monthYear.Month && x.YearOfTransaction == monthYear.Year)
+                        .FirstOrDefault() == null)
+                    {
+                        tempMonthlySummary.ExpenseAmaount = 0;
+                    }
+                    else
+                    {
+                        tempMonthlySummary.ExpenseAmaount =
+                            debitPartialOverview.Where(x => x.Month == monthYear.Month && x.YearOfTransaction == monthYear.Year)
+                            .FirstOrDefault()
+                            .AmountOfTransactions;
+                    }
+
+                    monthlySummaries.Add(tempMonthlySummary);
+                }
+
+                OverviewModel overview = new OverviewModel(monthlySummaries);
             }
 
             return View();
