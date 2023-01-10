@@ -122,5 +122,41 @@ namespace BudgetBuddyLibrary
 
             return usersBudgetNames;
         }
+
+        public List<LineItemModel> GetLineItemsByUserBudgetId(int userBudgetId, string connectionString)
+        {
+            SqlDataAccess sqlDataAccess = new SqlDataAccess();
+
+            StoredProcedureModel storedProcedure = new StoredProcedureModel()
+            {
+                NameOfStoredProcedure = "dbo.spBudgets_GetBudgetByUserBudgetId",
+
+                SqlParameterList = new List<SqlParameter>()
+                {
+                    new SqlParameter("@UserBudgetId", SqlDbType.Int)
+                    {
+                        Value = userBudgetId
+                    }
+                }
+            };
+
+            List<object[]> rawSqlRows = sqlDataAccess.Read<LineItemModel>(storedProcedure, connectionString);
+            List<LineItemModel> lineItems = new List<LineItemModel>();
+
+            foreach (object[] row in rawSqlRows)
+            {
+                lineItems.Add(new LineItemModel()
+                {
+                    Id = (int)row[0],
+                    UserBudgetId = (int)row[1],
+                    DateOfTransaction = (DateTime)row[2],
+                    AmountOfTransaction = (decimal)row[3],
+                    DescriptionOfTransaction = (string)row[4],
+                    IsCredit = (bool)row[5]
+                });
+            }
+
+            return lineItems;
+        }
     }
 }

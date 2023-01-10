@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace BudgetBuddyLibrary.Models
 {
-    public class LinteItemModel
+    public class LineItemModel
     {
         public int Id { get; set; }
 
-        public int UserId { get; set; }
+        public int UserBudgetId { get; set; }
 
         public DateTime DateOfTransaction { get; set; }
 

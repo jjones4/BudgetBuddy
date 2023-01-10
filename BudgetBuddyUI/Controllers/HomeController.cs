@@ -1,10 +1,12 @@
 ﻿using BudgetBuddyLibrary;
+using BudgetBuddyLibrary.BudgetComputations;
 using BudgetBuddyLibrary.Models;
 using BudgetBuddyUI.Areas.Identity.Data;
 using BudgetBuddyUI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace BudgetBuddyUI.Controllers
@@ -42,6 +44,20 @@ namespace BudgetBuddyUI.Controllers
             List<UsersBudgetNamesModel> usersBudgetNames =
                 sqlDataTranslator.GetUsersBudgetNamesRowsByUserId(loggedInUserId,
                 _config.GetConnectionString("BudgetDataDbConnectionString"));
+
+            int defaultBudgetId = DefaultBudget.GetDefaultBudgetId(usersBudgetNames);
+
+            List<LineItemModel> defaultLineItems;
+
+            // If there is a default budget, get the line items
+            // If there is not a default budget, don't go to the database,
+            // and also leave the list empty so we can check this in the UI
+            if (defaultBudgetId > 0)
+            {
+                defaultLineItems = 
+                    sqlDataTranslator.GetLineItemsByUserBudgetId(defaultBudgetId,
+                    _config.GetConnectionString("BudgetDataDbConnectionString"));
+            }
 
             return View();
         }

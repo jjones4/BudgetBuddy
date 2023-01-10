@@ -68,5 +68,6 @@
     <Build Include="dbo\Stored Procedures\spUsers_AddNewUserToBudgetDataDb.sql" />
     <Build Include="dbo\Stored Procedures\spUsers_GetUserIdByAspNetUserId.sql" />
     <Build Include="dbo\Stored Procedures\spUsersBudgetNames_GetAllRowsForGivenUserId.sql" />
+    <Build Include="dbo\Stored Procedures\spBudgets_GetBudgetByUserBudgetId.sql" />
   </ItemGroup>
 </Project>

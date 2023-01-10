@@ -14,8 +14,4 @@
     <ProjectReference Include="..\BudgetDataDb\BudgetDataDb.sqlproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="BudgetComputations\" />
-  </ItemGroup>
-
 </Project>
