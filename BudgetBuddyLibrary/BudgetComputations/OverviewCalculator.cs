@@ -22,6 +22,7 @@ namespace BudgetBuddyLibrary.BudgetComputations
 
             foreach (var item in uniqueMonthsYears)
             {
+                // Sume all transactions for the given month/year combination
                 decimal total = input.Where(x => x.DateOfTransaction.Month == item.Month 
                     && x.DateOfTransaction.Year == item.Year)
                     .Select(x => x.AmountOfTransaction)

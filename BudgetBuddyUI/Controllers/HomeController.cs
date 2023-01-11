@@ -47,8 +47,8 @@ namespace BudgetBuddyUI.Controllers
 
             int defaultBudgetId = DefaultBudget.GetDefaultBudgetId(usersBudgetNames);
             
-            // If there is a default budget, get the line items
-            // If there is not a default budget, don't go to the database,
+            // If there is a default (or first) budget, get the line items
+            // If there is not a default (or first) budget, don't go to the database,
             // and also leave the list empty so we can check this later
             if (defaultBudgetId > 0)
             {
@@ -80,7 +80,7 @@ namespace BudgetBuddyUI.Controllers
                 {
                     MonthlySummaryModel tempMonthlySummary = new MonthlySummaryModel();
 
-                    tempMonthlySummary.MonthName = monthYear.Month.ToString();
+                    tempMonthlySummary.MonthName = monthYear.ToString( "MMMM" );
                     tempMonthlySummary.YearOfTransaction = monthYear.Year;
 
                     if (creditPartialOverview
@@ -112,10 +112,42 @@ namespace BudgetBuddyUI.Controllers
                             .AmountOfTransactions;
                     }
 
+                    tempMonthlySummary.MarginAmount 
+                        = tempMonthlySummary.IncomeAmount - tempMonthlySummary.ExpenseAmaount;
+
                     monthlySummaries.Add(tempMonthlySummary);
                 }
 
-                OverviewModel overview = new OverviewModel(monthlySummaries);
+                // Create a new list to hold the values after inflation is calculated
+                List<MonthlySummaryModel> newMonthlySummaries = new List<MonthlySummaryModel>();
+                foreach (var item in monthlySummaries)
+                {
+                    newMonthlySummaries.Add(new MonthlySummaryModel()
+                    {
+                        MonthName = item.MonthName,
+                        YearOfTransaction = item.YearOfTransaction,
+                        IncomeAmount = item.IncomeAmount,
+                        ExpenseAmaount = item.ExpenseAmaount,
+                        MarginAmount = item.MarginAmount
+                    });
+                }
+
+                // Multiply the values in monthly summaries by an amount of inflation (8%)
+                foreach (var item in newMonthlySummaries)
+                {
+                    item.IncomeAmount += item.IncomeAmount * 0.08M;
+                    item.ExpenseAmaount += item.ExpenseAmaount * 0.08M;
+                    item.MarginAmount += item.MarginAmount * 0.08M;
+                }
+
+                OverviewModel overviewModel = new OverviewModel(monthlySummaries);
+                OverviewModel projectionModel = new OverviewModel(newMonthlySummaries);
+
+                return View(new List<OverviewModel>()
+                {
+                    overviewModel,
+                    projectionModel
+                });
             }
 
             return View();
