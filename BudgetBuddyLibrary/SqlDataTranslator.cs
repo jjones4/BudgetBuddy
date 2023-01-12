@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,7 +12,7 @@ namespace BudgetBuddyLibrary
 {
     public class SqlDataTranslator : ISqlDataTranslator
     {
-        public int AddNewUserToBudgetDataDb(UserModel userToAdd, string connectionString)
+        public async Task<int> AddNewUserToBudgetDataDb(UserModel userToAdd, string connectionString)
         {
             SqlDataAccess sqlDataAccess= new SqlDataAccess();
 
@@ -32,12 +33,12 @@ namespace BudgetBuddyLibrary
                 }
             };
 
-            int numRowsAffected = sqlDataAccess.Create(storedProcedure, connectionString);
+            int numRowsAffected = await sqlDataAccess.Create(storedProcedure, connectionString);
 
             return numRowsAffected;
         }
 
-        public int GetUserIdByAspNetUserId(string aspNetUserId, string connectionString)
+        public async Task<int> GetUserIdByAspNetUserId(string aspNetUserId, string connectionString)
         {
             SqlDataAccess sqlDataAccess = new SqlDataAccess();
 
@@ -54,7 +55,7 @@ namespace BudgetBuddyLibrary
                 }
             };
 
-            List<object[]> rawSqlRows = sqlDataAccess.Read<UserModel>(storedProcedure, connectionString);
+            List<object[]> rawSqlRows = await sqlDataAccess.Read<UserModel>(storedProcedure, connectionString);
             List<UserModel> users = new List<UserModel>();
 
             // There should only be one user that is returned
@@ -74,7 +75,7 @@ namespace BudgetBuddyLibrary
             return users.First().Id;
         }
 
-        public List<UsersBudgetNamesModel> GetUsersBudgetNamesRowsByUserId(int userId, string connectionString)
+        public async Task<List<UsersBudgetNamesModel>> GetUsersBudgetNamesRowsByUserId(int userId, string connectionString)
         {
             SqlDataAccess sqlDataAccess = new SqlDataAccess();
 
@@ -91,7 +92,7 @@ namespace BudgetBuddyLibrary
                 }
             };
 
-            List<object[]> rawSqlRows = sqlDataAccess.Read<UsersBudgetNamesModel>(storedProcedure, connectionString);
+            List<object[]> rawSqlRows = await sqlDataAccess.Read<UsersBudgetNamesModel>(storedProcedure, connectionString);
             List<UsersBudgetNamesModel> usersBudgetNames = new List<UsersBudgetNamesModel>();
 
             foreach (object[] row in rawSqlRows)
@@ -123,7 +124,7 @@ namespace BudgetBuddyLibrary
             return usersBudgetNames;
         }
 
-        public List<LineItemModel> GetLineItemsByUserBudgetId(int userBudgetId, string connectionString)
+        public async Task<List<LineItemModel>> GetLineItemsByUserBudgetId(int userBudgetId, string connectionString)
         {
             SqlDataAccess sqlDataAccess = new SqlDataAccess();
 
@@ -140,7 +141,7 @@ namespace BudgetBuddyLibrary
                 }
             };
 
-            List<object[]> rawSqlRows = sqlDataAccess.Read<LineItemModel>(storedProcedure, connectionString);
+            List<object[]> rawSqlRows = await sqlDataAccess.Read<LineItemModel>(storedProcedure, connectionString);
             List<LineItemModel> lineItems = new List<LineItemModel>();
 
             foreach (object[] row in rawSqlRows)

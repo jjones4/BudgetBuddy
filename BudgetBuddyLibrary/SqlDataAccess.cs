@@ -12,7 +12,7 @@ namespace BudgetBuddyLibrary
     public class SqlDataAccess : ISqlDataAccess
     {
         // Create - returns the number of records affected
-        public int Create(StoredProcedureModel storedProcedure, string connectionString)
+        public async Task<int> Create(StoredProcedureModel storedProcedure, string connectionString)
         {
             int numRowsAffected = 0;
 
@@ -22,11 +22,11 @@ namespace BudgetBuddyLibrary
                 {
                     using (SqlCommand cmd = new SqlCommand(storedProcedure.NameOfStoredProcedure, connection))
                     {
-                        connection.Open();
+                        await connection.OpenAsync();
 
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.AddRange(storedProcedure.SqlParameterList.ToArray());
-                        numRowsAffected = cmd.ExecuteNonQuery();
+                        numRowsAffected = await cmd.ExecuteNonQueryAsync();
                     }
                 }
             }
@@ -39,7 +39,7 @@ namespace BudgetBuddyLibrary
         }
 
         // Read
-        public List<object[]> Read<T>(StoredProcedureModel storedProcedure, string connectionString)
+        public async Task<List<object[]>> Read<T>(StoredProcedureModel storedProcedure, string connectionString)
         {
             List<object[]> output = new List<object[]>();
 
@@ -52,16 +52,16 @@ namespace BudgetBuddyLibrary
                 {
                     using (SqlCommand cmd = new SqlCommand(storedProcedure.NameOfStoredProcedure, connection))
                     {
-                        connection.Open();
+                        await connection.OpenAsync();
 
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.AddRange(storedProcedure.SqlParameterList.ToArray());
 
-                        SqlDataReader dr = cmd.ExecuteReader();
+                        SqlDataReader dr = await cmd.ExecuteReaderAsync();
 
                         if (dr.HasRows)
                         {
-                            while (dr.Read())
+                            while ( await dr.ReadAsync())
                             {
                                 object[] fields = new object[numFields];
 
@@ -82,13 +82,13 @@ namespace BudgetBuddyLibrary
         }
 
         // Update - returns the number of records affected
-        public int Update(StoredProcedureModel storedProcedure, string connectionString)
+        public async Task<int> Update(StoredProcedureModel storedProcedure, string connectionString)
         {
             return 0;
         }
 
         // Delete - returns the number of records affected
-        public int Delete(StoredProcedureModel storedProcedure, string connectionString)
+        public async Task<int> Delete(StoredProcedureModel storedProcedure, string connectionString)
         {
             return 0;
         }

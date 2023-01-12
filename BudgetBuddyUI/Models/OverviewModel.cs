@@ -1,4 +1,6 @@
-﻿namespace BudgetBuddyUI.Models
+﻿using BudgetBuddyLibrary.BudgetComputations;
+
+namespace BudgetBuddyUI.Models
 {
     public class OverviewModel
     {

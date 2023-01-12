@@ -38,5 +38,57 @@ namespace BudgetBuddyLibrary.BudgetComputations
 
             return overviewLines;
         }
+
+        public static List<HighlightModel> SumsByDescriptionOfExpenditure(List<LineItemModel> input)
+        {
+            List<HighlightModel> highlights = new List<HighlightModel>();
+            List<string> repeatedDescriptions = new List<string>();
+            bool itemEncounteredAlready = false;
+
+            foreach (var item in input)
+            {
+                // Description has already been encountered
+                foreach(var description in repeatedDescriptions)
+                {
+                    if (item.DescriptionOfTransaction == description)
+                    {
+                        itemEncounteredAlready = true;
+                        break;
+                    }
+                }
+
+                if (itemEncounteredAlready)
+                {
+                    itemEncounteredAlready = false;
+
+                    continue;
+                }
+                else
+                {
+                    var appearsMoreThanOnce = input
+                    .Where(x => x.DescriptionOfTransaction == item.DescriptionOfTransaction)
+                    .Skip(1)
+                    .Any();
+
+                    if (appearsMoreThanOnce)
+                    {
+                        repeatedDescriptions.Add(item.DescriptionOfTransaction);
+
+                        // Sum all transactions for the given description
+                        decimal total = input.Where(x => x.DescriptionOfTransaction == item.DescriptionOfTransaction)
+                            .Select(x => x.AmountOfTransaction)
+                            .Sum();
+
+                        highlights.Add(new HighlightModel()
+                        {
+                            NameOfExpenditure = item.DescriptionOfTransaction,
+                            AmountOfExpenditure = total
+                        });
+                    }
+                }
+            }
+
+            return highlights;
+        }
     }
 }

@@ -254,7 +254,7 @@ BEGIN
 		(UserBudgetId, DateId, AmountId, DescriptionId, Credit)
 	VALUES
 		(1,3,8,5,0),
-		(1,4,6,4,0),
+		(1,4,6,5,0),
 		(1,6,15,8,1),
 		(1,7,13,9,0),
 		(1,7,14,2,0),

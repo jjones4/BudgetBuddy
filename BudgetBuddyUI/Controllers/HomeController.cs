@@ -36,13 +36,13 @@ namespace BudgetBuddyUI.Controllers
             SqlDataTranslator sqlDataTranslator = new SqlDataTranslator();
 
             // Get the logged in user's Id from the BudgetDataDb
-            int loggedInUserId = sqlDataTranslator.GetUserIdByAspNetUserId(aspNetUserId,
+            int loggedInUserId = await sqlDataTranslator.GetUserIdByAspNetUserId(aspNetUserId,
                 _config.GetConnectionString("BudgetDataDbConnectionString"));
 
             // Now, based on the logged in user Id, we need to get the default
             // budget, if any, from the UsersBudgetNames table
             List<UsersBudgetNamesModel> usersBudgetNames =
-                sqlDataTranslator.GetUsersBudgetNamesRowsByUserId(loggedInUserId,
+                await sqlDataTranslator.GetUsersBudgetNamesRowsByUserId(loggedInUserId,
                 _config.GetConnectionString("BudgetDataDbConnectionString"));
 
             int defaultBudgetId = DefaultBudget.GetDefaultBudgetId(usersBudgetNames);
@@ -54,8 +54,8 @@ namespace BudgetBuddyUI.Controllers
             {
                 List<LineItemModel> defaultLineItems;
 
-                defaultLineItems = 
-                    sqlDataTranslator.GetLineItemsByUserBudgetId(defaultBudgetId,
+                defaultLineItems =
+                    await sqlDataTranslator.GetLineItemsByUserBudgetId(defaultBudgetId,
                     _config.GetConnectionString("BudgetDataDbConnectionString"));
 
                 List<LineItemModel> creditLineItems = 
@@ -142,6 +142,11 @@ namespace BudgetBuddyUI.Controllers
 
                 OverviewModel overviewModel = new OverviewModel(monthlySummaries);
                 OverviewModel projectionModel = new OverviewModel(newMonthlySummaries);
+
+                // Now we will calculate the highlights (sum of amount spent on any item
+                // that appears more than one time in the user's budget)
+                overviewModel.Highlights = 
+                OverviewCalculator.SumsByDescriptionOfExpenditure(defaultLineItems);
 
                 return View(new List<OverviewModel>()
                 {

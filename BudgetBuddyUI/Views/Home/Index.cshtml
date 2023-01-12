@@ -179,4 +179,37 @@ else
             </tr>
         </tbody>
     </table>
+
+    <br />
+    <br />
+
+    // Highlights Table
+    <h3>Highlights</h3>
+    <br />
+
+    <table class="table table-striped w-auto">
+        <thead class="thead-dark">
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.ToList()[0].Highlights.First().NameOfExpenditure)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ToList()[0].Highlights.First().AmountOfExpenditure)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.ToList()[0].Highlights)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NameOfExpenditure)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AmountOfExpenditure)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 }

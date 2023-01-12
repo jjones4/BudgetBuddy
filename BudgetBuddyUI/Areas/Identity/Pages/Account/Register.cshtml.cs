@@ -146,7 +146,7 @@ namespace BudgetBuddyUI.Areas.Identity.Pages.Account
                         AspNetUserId = userId
                     };
 
-                    int numRowsAffected = sqlDataTranslator.AddNewUserToBudgetDataDb(newUser, 
+                    int numRowsAffected = await sqlDataTranslator.AddNewUserToBudgetDataDb(newUser, 
                         _config.GetConnectionString("BudgetDataDbConnectionString"));
 
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
