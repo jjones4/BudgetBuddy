@@ -1,0 +1,56 @@
+﻿@model BudgetBuddyLibrary.Models.BudgetModel
+@{
+    ViewData["Title"] = "Your Budget";
+}
+
+<div class="text-center">
+    <h1>@Model.BudgetName</h1>
+
+    @if (Model is null)
+    {
+        <p>You haven't created any budgets yet.</p>
+    }
+    else
+    {
+        <br />
+
+        <table class="table table-striped w-auto">
+            <thead class="thead-dark">
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Transactions.First().DateOfTransaction)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Transactions.First().AmountOfTransaction)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Transactions.First().DescriptionOfTransaction)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Transactions.First().IsCredit)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Transactions.ToList())
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.DateOfTransaction)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.AmountOfTransaction)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.DescriptionOfTransaction)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.IsCredit)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    }
+</div>

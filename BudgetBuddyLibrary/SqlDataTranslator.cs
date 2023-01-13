@@ -159,5 +159,37 @@ namespace BudgetBuddyLibrary
 
             return lineItems;
         }
+
+        public async Task<List<BudgetNameModel>> GetBudgetNameByDefaultBudgetId(int defaultUserBudgetId, string connectionString)
+        {
+            SqlDataAccess sqlDataAccess = new SqlDataAccess();
+
+            StoredProcedureModel storedProcedure = new StoredProcedureModel()
+            {
+                NameOfStoredProcedure = "dbo.spUsersBudgetNames_GetBudgetNameByDefaultBudgetId",
+
+                SqlParameterList = new List<SqlParameter>()
+                {
+                    new SqlParameter("@Id", SqlDbType.Int)
+                    {
+                        Value = defaultUserBudgetId
+                    }
+                }
+            };
+
+            List<object[]> rawSqlRows = await sqlDataAccess.Read<BudgetNameModel>(storedProcedure, connectionString);
+            List<BudgetNameModel> budgetNames = new List<BudgetNameModel>();
+
+            foreach (object[] row in rawSqlRows)
+            {
+                budgetNames.Add(new BudgetNameModel()
+                {
+                    Id = (int)row[0],
+                    BudgetName = (string)row[1]
+                });
+            }
+
+            return budgetNames;
+        }
     }
 }
