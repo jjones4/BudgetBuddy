@@ -70,5 +70,8 @@
     <Build Include="dbo\Stored Procedures\spUsersBudgetNames_GetAllRowsForGivenUserId.sql" />
     <Build Include="dbo\Stored Procedures\spBudgets_GetBudgetByUserBudgetId.sql" />
     <Build Include="dbo\Stored Procedures\spUsersBudgetNames_GetBudgetNameByDefaultBudgetId.sql" />
+    <Build Include="dbo\Stored Procedures\spBudgetNames_GetBudgetNamesByLoggedInUserId.sql" />
+    <Build Include="dbo\Stored Procedures\spUsersBudgetNames_GetUserBudgetNameIdByLoggedInUserIdAndBudgetNamesId.sql" />
+    <Build Include="dbo\Stored Procedures\spBudgetNames_GetBudgetNameById.sql" />
   </ItemGroup>
 </Project>

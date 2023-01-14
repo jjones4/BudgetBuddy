@@ -14,7 +14,7 @@ namespace BudgetBuddyLibrary
     {
         public async Task<int> AddNewUserToBudgetDataDb(UserModel userToAdd, string connectionString)
         {
-            SqlDataAccess sqlDataAccess= new SqlDataAccess();
+            SqlDataAccess sqlDataAccess = new SqlDataAccess();
 
             StoredProcedureModel storedProcedure = new StoredProcedureModel()
             {
@@ -190,6 +190,108 @@ namespace BudgetBuddyLibrary
             }
 
             return budgetNames;
+        }
+
+        public async Task<List<BudgetNameModel>> GetBudgetNamesByLoggedInUserId(int loggedInUserId, string connectionString)
+        {
+            SqlDataAccess sqlDataAccess = new SqlDataAccess();
+
+            StoredProcedureModel storedProcedure = new StoredProcedureModel()
+            {
+                NameOfStoredProcedure = "dbo.spBudgetNames_GetBudgetNamesByLoggedInUserId",
+
+                SqlParameterList = new List<SqlParameter>()
+                {
+                    new SqlParameter("@UserId", SqlDbType.Int)
+                    {
+                        Value = loggedInUserId
+                    }
+                }
+            };
+
+            List<object[]> rawSqlRows = await sqlDataAccess.Read<BudgetNameModel>(storedProcedure, connectionString);
+            List<BudgetNameModel> budgetNames = new List<BudgetNameModel>();
+
+            foreach (object[] row in rawSqlRows)
+            {
+                budgetNames.Add(new BudgetNameModel()
+                {
+                    Id = (int)row[0],
+                    BudgetName = (string)row[1]
+                });
+            }
+
+            return budgetNames;
+        }
+
+        public async Task<int> GetUserBudgetNameIdByLoggedInUserIdAndBudgetNameId(int loggedInUserId, int budgetNameId, string connectionString)
+        {
+            SqlDataAccess sqlDataAccess = new SqlDataAccess();
+
+            StoredProcedureModel storedProcedure = new StoredProcedureModel()
+            {
+                NameOfStoredProcedure = "dbo.spUsersBudgetNames_GetUserBudgetNameIdByLoggedInUserIdAndBudgetNamesId",
+
+                SqlParameterList = new List<SqlParameter>()
+                {
+                    new SqlParameter("@UserId", SqlDbType.Int)
+                    {
+                        Value = loggedInUserId
+                    },
+                     new SqlParameter("@BudgetNameId", SqlDbType.Int)
+                    {
+                        Value = budgetNameId
+                    }
+                }
+            };
+
+            List<object[]> rawSqlRows = await sqlDataAccess.Read<UsersBudgetNamesModel>(storedProcedure, connectionString);
+            List<UsersBudgetNamesModel> usersBudgetNames = new List<UsersBudgetNamesModel>();
+
+            // There should only be one user that is returned
+            // so this foreach loop may not be necessary
+            foreach (object[] row in rawSqlRows)
+            {
+                usersBudgetNames.Add(new UsersBudgetNamesModel()
+                {
+                    Id = (int)row[0]
+                });
+            }
+
+            // There should only be one user that is returned
+            // since AspNetUserId should be unique
+            return usersBudgetNames.First().Id;
+        }
+
+        public async Task<string> GetBudgetNameById(int budgetNameId, string connectionString)
+        {
+            SqlDataAccess sqlDataAccess = new SqlDataAccess();
+
+            StoredProcedureModel storedProcedure = new StoredProcedureModel()
+            {
+                NameOfStoredProcedure = "dbo.spBudgetNames_GetBudgetNameById",
+
+                SqlParameterList = new List<SqlParameter>()
+                {
+                    new SqlParameter("@Id", SqlDbType.Int)
+                    {
+                        Value = budgetNameId
+                    }
+                }
+            };
+
+            List<object[]> rawSqlRows = await sqlDataAccess.Read<BudgetNameModel>(storedProcedure, connectionString);
+            List<BudgetNameModel> budgetNames = new List<BudgetNameModel>();
+
+            foreach (object[] row in rawSqlRows)
+            {
+                budgetNames.Add(new BudgetNameModel()
+                {
+                    BudgetName = (string)row[0]
+                });
+            }
+
+            return budgetNames.First().BudgetName;
         }
     }
 }
