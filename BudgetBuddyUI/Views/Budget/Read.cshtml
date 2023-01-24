@@ -25,6 +25,15 @@ else
 
     <br />
 
+    <form asp-action="Create" method="get" class="col-md-2">
+        <div class="form-group">
+            <input type="hidden" name="budgetId" value="@Model.BudgetId" />
+            <input type="submit" name="budgetName" value="Create a new line item in your @Model.BudgetName budget" class="btn btn-primary" />
+        </div>
+    </form>
+
+    <br />
+
     <h3>@Model.BudgetName</h3>
 
     <table class="table table-striped w-auto">

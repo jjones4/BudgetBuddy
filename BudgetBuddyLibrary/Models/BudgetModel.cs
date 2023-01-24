@@ -8,6 +8,8 @@ namespace BudgetBuddyLibrary.Models
 {
     public class BudgetModel
     {
+        public int BudgetId { get; set; }
+
         public string BudgetName { get; set; } = string.Empty;
 
         public List<LineItemModel> Transactions { get; set; } = new List<LineItemModel>();

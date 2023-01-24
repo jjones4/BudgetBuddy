@@ -27,10 +27,25 @@ namespace BudgetBuddyUI.Controllers
             _logger = logger;
         }
 
-        public IActionResult Create()
+        public IActionResult Create(int budgetId, string budgetName)
         {
-            LineItemModel newLineItem = new LineItemModel();
+            List<LineItemModel> lineItems = new List<LineItemModel>()
+            {
+                new LineItemModel()
+            };
 
+            BudgetModel currentBudget = new BudgetModel()
+            {
+                BudgetId = budgetId,
+                Transactions = lineItems
+            };
+
+            return View(currentBudget);
+        }
+
+        [HttpPost]
+        public IActionResult Create(LineItemModel newLineItem)
+        {
             return View(newLineItem);
         }
 
@@ -77,6 +92,7 @@ namespace BudgetBuddyUI.Controllers
                     _config.GetConnectionString("BudgetDataDbConnectionString"));
 
                 // 1. Set the budget name
+                budget.BudgetId = defaultBudgetId;
                 budget.BudgetName = budgetNameRows.First().BudgetName;
 
                 // 2. Populate the budget line items
@@ -97,7 +113,7 @@ namespace BudgetBuddyUI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Read(BudgetViewModel budgetModel)
+        public async Task<IActionResult> Read(BudgetViewModel budgetViewModel)
         {
             // Figure out who is logged in, and get the AspNetUserId for identifying the user
             // in the BudgetDataDb
@@ -109,12 +125,13 @@ namespace BudgetBuddyUI.Controllers
             int loggedInUserId = await sqlDataTranslator.GetUserIdByAspNetUserId(aspNetUserId,
                 _config.GetConnectionString("BudgetDataDbConnectionString"));
 
-            int.TryParse(budgetModel.BudgetName, out int budgetNameId);
+            int.TryParse(budgetViewModel.BudgetName, out int budgetNameId);
 
             string budgetName = await sqlDataTranslator.GetBudgetNameById(budgetNameId,
                 _config.GetConnectionString("BudgetDataDbConnectionString"));
 
-            budgetModel.BudgetName = budgetName;
+            budgetViewModel.BudgetId = budgetNameId;
+            budgetViewModel.BudgetName = budgetName;
 
             int userBudgetNameId = await sqlDataTranslator.GetUserBudgetNameIdByLoggedInUserIdAndBudgetNameId(
                 loggedInUserId, budgetNameId,
@@ -126,21 +143,21 @@ namespace BudgetBuddyUI.Controllers
                 await sqlDataTranslator.GetLineItemsByUserBudgetId(userBudgetNameId,
                 _config.GetConnectionString("BudgetDataDbConnectionString"));
 
-            budgetModel.Transactions = budget;
+            budgetViewModel.Transactions = budget;
 
             List<BudgetNameModel> budgetNames = await sqlDataTranslator.GetBudgetNamesByLoggedInUserId(loggedInUserId,
                 _config.GetConnectionString("BudgetDataDbConnectionString"));
 
             budgetNames.ForEach(x =>
             {
-                budgetModel.BudgetNames.Add(new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
+                budgetViewModel.BudgetNames.Add(new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
                 {
                     Value = x.Id.ToString(),
                     Text = x.BudgetName
                 });
             });
 
-            return View(budgetModel);
+            return View(budgetViewModel);
         }
     }
 }

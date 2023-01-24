@@ -6,9 +6,11 @@ namespace BudgetBuddyUI.Models
 {
     public class BudgetViewModel
     {
+        public int BudgetId { get; set; }
+
         public string BudgetName { get; set; } = string.Empty;
 
-        [DisplayName("Budgets")]
+        [DisplayName("Select a budget:")]
         public List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem> BudgetNames { get; set; } = new List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>();
 
         public List<LineItemModel> Transactions { get; set; } = new List<LineItemModel>();
