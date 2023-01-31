@@ -130,12 +130,13 @@ namespace BudgetBuddyUI.Controllers
             string budgetName = await sqlDataTranslator.GetBudgetNameById(budgetNameId,
                 _config.GetConnectionString("BudgetDataDbConnectionString"));
 
-            budgetViewModel.BudgetId = budgetNameId;
             budgetViewModel.BudgetName = budgetName;
 
             int userBudgetNameId = await sqlDataTranslator.GetUserBudgetNameIdByLoggedInUserIdAndBudgetNameId(
                 loggedInUserId, budgetNameId,
                 _config.GetConnectionString("BudgetDataDbConnectionString"));
+
+            budgetViewModel.BudgetId = userBudgetNameId;
 
             List<LineItemModel> budget;
 

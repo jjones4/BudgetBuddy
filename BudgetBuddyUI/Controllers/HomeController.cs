@@ -146,7 +146,7 @@ namespace BudgetBuddyUI.Controllers
                 // Now we will calculate the highlights (sum of amount spent on any item
                 // that appears more than one time in the user's budget)
                 overviewModel.Highlights = 
-                OverviewCalculator.SumsByDescriptionOfExpenditure(defaultLineItems);
+                    OverviewCalculator.SumsByDescriptionOfExpenditure(defaultLineItems);
 
                 return View(new List<OverviewModel>()
                 {
