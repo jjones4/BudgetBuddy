@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authorization;
 using BudgetBuddyUI.Models;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace BudgetBuddyUI.Controllers
 {
@@ -34,19 +35,27 @@ namespace BudgetBuddyUI.Controllers
                 new LineItemModel()
             };
 
-            BudgetModel currentBudget = new BudgetModel()
+            BudgetModel budget = new BudgetModel()
             {
                 BudgetId = budgetId,
+                BudgetName = budgetName,
                 Transactions = lineItems
             };
 
-            return View(currentBudget);
+            return View(budget);
         }
 
         [HttpPost]
-        public IActionResult Create(LineItemModel newLineItem)
+        public async Task<IActionResult> Create(BudgetModel budget)
         {
-            return View(newLineItem);
+            if (ModelState.IsValid == false)
+            {
+                return View();
+            }
+
+
+
+            return RedirectToAction("Read");
         }
 
         public async Task<IActionResult> Read()
