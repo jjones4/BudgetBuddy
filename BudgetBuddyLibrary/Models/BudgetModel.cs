@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 
 namespace BudgetBuddyLibrary.Models
 {
@@ -12,6 +13,6 @@ namespace BudgetBuddyLibrary.Models
 
         public string BudgetName { get; set; } = string.Empty;
 
-        public List<LineItemModel> Transactions { get; set; } = new List<LineItemModel>();
+        public LineItemModel Transaction { get; set; } = new LineItemModel();
     }
 }

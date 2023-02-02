@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using BudgetBuddyUI.Models;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System.Transactions;
 
 namespace BudgetBuddyUI.Controllers
 {
@@ -30,30 +31,27 @@ namespace BudgetBuddyUI.Controllers
 
         public IActionResult Create(int budgetId, string budgetName)
         {
-            List<LineItemModel> lineItems = new List<LineItemModel>()
-            {
-                new LineItemModel()
-            };
+            LineItemModel transaction = new LineItemModel();
 
             BudgetModel budget = new BudgetModel()
             {
                 BudgetId = budgetId,
                 BudgetName = budgetName,
-                Transactions = lineItems
+                Transaction = transaction
             };
 
             return View(budget);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(BudgetModel budget)
+        public IActionResult Create(BudgetModel budget)
         {
             if (ModelState.IsValid == false)
             {
                 return View();
             }
 
-
+            BudgetModel tempBudget = budget;
 
             return RedirectToAction("Read");
         }

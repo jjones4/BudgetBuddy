@@ -3,7 +3,7 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create a New Line Item in your @Model.BudgetName</h1>
+<h1>Create a New Line Item in Your @Model.BudgetName Budget</h1>
 
 <br />
 
@@ -12,35 +12,38 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-            <div class="form-group">
-                <label asp-for="Transactions.First().DateOfTransaction" class="control-label"></label>
-                <input asp-for="Transactions.First().DateOfTransaction" class="form-control" />
-                <span asp-validation-for="Transactions.First().DateOfTransaction" class="text-danger"></span>
-            </div>
+            <input type="hidden" name="budgetId" value="@Model.BudgetId" />
+            <input type="hidden" name="budgetName" value="@Model.BudgetName" />
 
-            <div class="form-group">
-                <label asp-for="Transactions.First().AmountOfTransaction" class="control-label"></label>
-                <input asp-for="Transactions.First().AmountOfTransaction" class="form-control" />
-                <span asp-validation-for="Transactions.First().AmountOfTransaction" class="text-danger"></span>
-            </div>
+                <div class="form-group">
+                    <label asp-for="Transaction.DateOfTransaction" class="control-label"></label>
+                <input asp-for="Transaction.DateOfTransaction" class="form-control" />
+                <span asp-validation-for="Transaction.DateOfTransaction" class="text-danger"></span>
+                </div>
 
-            <div class="form-group">
-                <label asp-for="Transactions.First().DescriptionOfTransaction" class="control-label"></label>
-                <input asp-for="Transactions.First().DescriptionOfTransaction" class="form-control" />
-                <span asp-validation-for="Transactions.First().DescriptionOfTransaction" class="text-danger"></span>
-            </div>
+                <div class="form-group">
+                    <label asp-for="Transaction.AmountOfTransaction" class="control-label"></label>
+                <input asp-for="Transaction.AmountOfTransaction" class="form-control" />
+                <span asp-validation-for="Transaction.AmountOfTransaction" class="text-danger"></span>
+                </div>
 
-            <div class="form-group">
-                <label asp-for="Transactions.First().IsCredit" class="control-label"></label>
-                <input asp-for="Transactions.First().IsCredit" class="form-control" />
-                <span asp-validation-for="Transactions.First().IsCredit" class="text-danger"></span>
-            </div>
+                <div class="form-group">
+                    <label asp-for="Transaction.DescriptionOfTransaction" class="control-label"></label>
+                <input asp-for="Transaction.DescriptionOfTransaction" class="form-control" />
+                <span asp-validation-for="Transaction.DescriptionOfTransaction" class="text-danger"></span>
+                </div>
 
-            <br />
+                <div class="form-group">
+                    <label asp-for="Transaction.IsCredit" class="control-label"></label>
+                <input asp-for="Transaction.IsCredit" value="true" name="Transaction.IsCredit" type="checkbox" checked" />
+                <span asp-validation-for="Transaction.IsCredit" class="text-danger"></span>
+                </div>
 
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
+                <br />
+
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-primary" />
+                </div>
         </form>
     </div>
 </div>
