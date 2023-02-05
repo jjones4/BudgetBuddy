@@ -38,6 +38,115 @@ namespace BudgetBuddyLibrary
             return numRowsAffected;
         }
 
+        public async Task<int> AddNewLineItemToBudgetsTable(int budgetId, 
+            int dateId,
+            int amountId, 
+            int descriptionId, 
+            bool isCredit, 
+            string connectionString)
+        {
+            SqlDataAccess sqlDataAccess = new SqlDataAccess();
+
+            StoredProcedureModel storedProcedure = new StoredProcedureModel()
+            {
+                NameOfStoredProcedure = "dbo.spBudgets_AddNewLineItem",
+
+                SqlParameterList = new List<SqlParameter>()
+                {
+                    new SqlParameter("@UserBudgetId", SqlDbType.Int)
+                    {
+                        Value = budgetId
+                    },
+                    new SqlParameter("@DateId", SqlDbType.Int)
+                    {
+                        Value = dateId
+                    },
+                    new SqlParameter("@AmountId", SqlDbType.Int)
+                    {
+                        Value = amountId
+                    },
+                    new SqlParameter("@DescriptionId", SqlDbType.Int)
+                    {
+                        Value = descriptionId
+                    },
+                    new SqlParameter("@IsCredit", SqlDbType.Bit)
+                    {
+                        Value = isCredit
+                    }
+                }
+            };
+
+            int numRowsAffected = await sqlDataAccess.Create(storedProcedure, connectionString);
+
+            return numRowsAffected;
+        }
+
+        public async Task<int> AddNewDateToDatesTable(DateTime date, string connectionString)
+        {
+            SqlDataAccess sqlDataAccess = new SqlDataAccess();
+
+            StoredProcedureModel storedProcedure = new StoredProcedureModel()
+            {
+                NameOfStoredProcedure = "dbo.spDates_AddNewDate",
+
+                SqlParameterList = new List<SqlParameter>()
+                {
+                    new SqlParameter("@Date", SqlDbType.DateTime2)
+                    {
+                        Value = date
+                    }
+                }
+            };
+
+            int numRowsAffected = await sqlDataAccess.Create(storedProcedure, connectionString);
+
+            return numRowsAffected;
+        }
+
+        public async Task<int> AddNewAmountToAmountsTable(decimal amount, string connectionString)
+        {
+            SqlDataAccess sqlDataAccess = new SqlDataAccess();
+
+            StoredProcedureModel storedProcedure = new StoredProcedureModel()
+            {
+                NameOfStoredProcedure = "dbo.spAmounts_AddNewAmount",
+
+                SqlParameterList = new List<SqlParameter>()
+                {
+                    new SqlParameter("@Amount", SqlDbType.Money)
+                    {
+                        Value = amount
+                    }
+                }
+            };
+
+            int numRowsAffected = await sqlDataAccess.Create(storedProcedure, connectionString);
+
+            return numRowsAffected;
+        }
+
+        public async Task<int> AddNewDescriptionToDescriptionsTable(string description, string connectionString)
+        {
+            SqlDataAccess sqlDataAccess = new SqlDataAccess();
+
+            StoredProcedureModel storedProcedure = new StoredProcedureModel()
+            {
+                NameOfStoredProcedure = "dbo.spDescriptions_AddNewDescription",
+
+                SqlParameterList = new List<SqlParameter>()
+                {
+                    new SqlParameter("@Description", SqlDbType.NVarChar)
+                    {
+                        Value = description
+                    }
+                }
+            };
+
+            int numRowsAffected = await sqlDataAccess.Create(storedProcedure, connectionString);
+
+            return numRowsAffected;
+        }
+
         public async Task<int> GetUserIdByAspNetUserId(string aspNetUserId, string connectionString)
         {
             SqlDataAccess sqlDataAccess = new SqlDataAccess();
@@ -122,6 +231,102 @@ namespace BudgetBuddyLibrary
             }
 
             return usersBudgetNames;
+        }
+
+        public async Task<List<DateModel>> GetDateRowsByDate(DateTime date, string connectionString)
+        {
+            SqlDataAccess sqlDataAccess = new SqlDataAccess();
+
+            StoredProcedureModel storedProcedure = new StoredProcedureModel()
+            {
+                NameOfStoredProcedure = "dbo.spDates_GetDateRowByDate",
+
+                SqlParameterList = new List<SqlParameter>()
+                {
+                    new SqlParameter("@Date", SqlDbType.DateTime2)
+                    {
+                        Value = date
+                    }
+                }
+            };
+
+            List<object[]> rawSqlRows = await sqlDataAccess.Read<DateModel>(storedProcedure, connectionString);
+            List<DateModel> dates = new List<DateModel>();
+
+            foreach (object[] row in rawSqlRows)
+            {
+                dates.Add(new DateModel()
+                {
+                    Id = (int)row[0],
+                    DateOfTransaction = (DateTime)row[1]
+                });
+            }
+
+            return dates;
+        }
+
+        public async Task<List<AmountModel>> GetAmountRowsByAmount(decimal amount, string connectionString)
+        {
+            SqlDataAccess sqlDataAccess = new SqlDataAccess();
+
+            StoredProcedureModel storedProcedure = new StoredProcedureModel()
+            {
+                NameOfStoredProcedure = "dbo.spAmounts_GetAmountRowByAmount",
+
+                SqlParameterList = new List<SqlParameter>()
+                {
+                    new SqlParameter("@Amount", SqlDbType.Money)
+                    {
+                        Value = amount
+                    }
+                }
+            };
+
+            List<object[]> rawSqlRows = await sqlDataAccess.Read<AmountModel>(storedProcedure, connectionString);
+            List<AmountModel> amounts = new List<AmountModel>();
+
+            foreach (object[] row in rawSqlRows)
+            {
+                amounts.Add(new AmountModel()
+                {
+                    Id = (int)row[0],
+                    AmountOfTransaction = (Decimal)row[1]
+                });
+            }
+
+            return amounts;
+        }
+
+        public async Task<List<DescriptionModel>> GetDescriptionRowsByDescription(string description, string connectionString)
+        {
+            SqlDataAccess sqlDataAccess = new SqlDataAccess();
+
+            StoredProcedureModel storedProcedure = new StoredProcedureModel()
+            {
+                NameOfStoredProcedure = "dbo.spDescriptions_GetDescriptionRowByDescription",
+
+                SqlParameterList = new List<SqlParameter>()
+                {
+                    new SqlParameter("@Description", SqlDbType.NVarChar)
+                    {
+                        Value = description
+                    }
+                }
+            };
+
+            List<object[]> rawSqlRows = await sqlDataAccess.Read<DescriptionModel>(storedProcedure, connectionString);
+            List<DescriptionModel> descriptions = new List<DescriptionModel>();
+
+            foreach (object[] row in rawSqlRows)
+            {
+                descriptions.Add(new DescriptionModel()
+                {
+                    Id = (int)row[0],
+                    DescriptionOfTransaction = (string)row[1]
+                });
+            }
+
+            return descriptions;
         }
 
         public async Task<List<LineItemModel>> GetLineItemsByUserBudgetId(int userBudgetId, string connectionString)

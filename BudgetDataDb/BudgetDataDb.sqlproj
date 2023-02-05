@@ -73,5 +73,12 @@
     <Build Include="dbo\Stored Procedures\spBudgetNames_GetBudgetNamesByLoggedInUserId.sql" />
     <Build Include="dbo\Stored Procedures\spUsersBudgetNames_GetUserBudgetNameIdByLoggedInUserIdAndBudgetNamesId.sql" />
     <Build Include="dbo\Stored Procedures\spBudgetNames_GetBudgetNameById.sql" />
+    <Build Include="dbo\Stored Procedures\spDates_GetDateRowByDate.sql" />
+    <Build Include="dbo\Stored Procedures\spAmounts_GetAmountRowByAmount.sql" />
+    <Build Include="dbo\Stored Procedures\spDescriptions_GetDescriptionRowByDescription.sql" />
+    <Build Include="dbo\Stored Procedures\spDates_AddNewDate.sql" />
+    <Build Include="dbo\Stored Procedures\spAmounts_AddNewAmount.sql" />
+    <Build Include="dbo\Stored Procedures\spDescriptions_AddNewDescription.sql" />
+    <Build Include="dbo\Stored Procedures\spBudgets_AddNewLineItem.sql" />
   </ItemGroup>
 </Project>
