@@ -70,6 +70,20 @@ else
                     <td>
                         @Html.DisplayFor(modelItem => item.IsCredit)
                     </td>
+                    <td>
+                        <form asp-action="Edit" method="get" class="col-md-2">
+                            <div class="form-group">
+                                <input type="hidden" name="budgetName" value="@Model.BudgetName" />
+                                <input type="hidden" name="lineItemId" value="@item.Id" />
+                                <input type="hidden" name="lineItemBudgetId" value="@Model.BudgetId" />
+                                <input type="hidden" name="lineItemDate" value="@item.DateOfTransaction" />
+                                <input type="hidden" name="lineItemAmount" value="@item.AmountOfTransaction" />
+                                <input type="hidden" name="lineItemDescription" value="@item.DescriptionOfTransaction" />
+                                <input type="hidden" name="lineItemIsCredit" value="@item.IsCredit" />
+                                <input type="submit" value="Edit" class="btn btn-primary" />
+                            </div>
+                        </form>
+                    </td>
                 </tr>
             }
         </tbody>

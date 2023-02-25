@@ -111,7 +111,7 @@ namespace BudgetBuddyUI.Controllers
 
             // 6. Insert into the budget table
             sqlDataTranslator.AddNewLineItemToBudgetsTable(
-                budget.BudgetId, 
+                budget.BudgetId,
                 dates.First().Id,
                 amounts.First().Id,
                 descriptions.First().Id,
@@ -231,6 +231,32 @@ namespace BudgetBuddyUI.Controllers
             });
 
             return View(budgetViewModel);
+        }
+
+        public IActionResult Edit(string budgetName,
+            int lineItemId,
+            int lineItemBudgetId,
+            DateTime lineItemDate,
+            Decimal lineItemAmount,
+            string lineItemDescription,
+            bool isCredit)
+        {
+            EditViewModel editViewModel = new EditViewModel();
+
+            editViewModel.BudgetName = budgetName;
+            
+            LineItemModel lineItem = new LineItemModel();
+
+            lineItem.Id = lineItemId;
+            lineItem.UserBudgetId = lineItemBudgetId;
+            lineItem.DateOfTransaction = lineItemDate;
+            lineItem.AmountOfTransaction = lineItemAmount;
+            lineItem.DescriptionOfTransaction = lineItemDescription;
+            lineItem.IsCredit = isCredit;
+
+            editViewModel.Transaction = lineItem;
+
+            return View(editViewModel);
         }
     }
 }
