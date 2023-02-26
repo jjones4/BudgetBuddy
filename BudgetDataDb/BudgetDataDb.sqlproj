@@ -80,5 +80,7 @@
     <Build Include="dbo\Stored Procedures\spAmounts_AddNewAmount.sql" />
     <Build Include="dbo\Stored Procedures\spDescriptions_AddNewDescription.sql" />
     <Build Include="dbo\Stored Procedures\spBudgets_AddNewLineItem.sql" />
+    <Build Include="dbo\Stored Procedures\spBudgets_UpdateLineItemById.sql" />
+    <Build Include="dbo\Stored Procedures\spBudgets_DeleteLineItemById.sql" />
   </ItemGroup>
 </Project>

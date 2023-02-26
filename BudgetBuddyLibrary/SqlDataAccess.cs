@@ -84,13 +84,55 @@ namespace BudgetBuddyLibrary
         // Update - returns the number of records affected
         public async Task<int> Update(StoredProcedureModel storedProcedure, string connectionString)
         {
-            return 0;
+            int numRowsAffected = 0;
+
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand(storedProcedure.NameOfStoredProcedure, connection))
+                    {
+                        await connection.OpenAsync();
+
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddRange(storedProcedure.SqlParameterList.ToArray());
+                        numRowsAffected = await cmd.ExecuteNonQueryAsync();
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return numRowsAffected;
         }
 
         // Delete - returns the number of records affected
         public async Task<int> Delete(StoredProcedureModel storedProcedure, string connectionString)
         {
-            return 0;
+            int numRowsAffected = 0;
+
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand(storedProcedure.NameOfStoredProcedure, connection))
+                    {
+                        await connection.OpenAsync();
+
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddRange(storedProcedure.SqlParameterList.ToArray());
+                        numRowsAffected = await cmd.ExecuteNonQueryAsync();
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return numRowsAffected;
         }
     }
 }

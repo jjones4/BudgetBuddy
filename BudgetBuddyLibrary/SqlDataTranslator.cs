@@ -498,5 +498,71 @@ namespace BudgetBuddyLibrary
 
             return budgetNames.First().BudgetName;
         }
+
+        public async Task<int> UpdateLineItemInBudgetsTable(int lineItemId,
+            int dateId,
+            int amountId,
+            int descriptionId,
+            bool isCredit,
+            string connectionString)
+        {
+            SqlDataAccess sqlDataAccess = new SqlDataAccess();
+
+            StoredProcedureModel storedProcedure = new StoredProcedureModel()
+            {
+                NameOfStoredProcedure = "dbo.spBudgets_UpdateLineItemById",
+
+                SqlParameterList = new List<SqlParameter>()
+                {
+                    new SqlParameter("@LineItemId", SqlDbType.Int)
+                    {
+                        Value = lineItemId
+                    },
+                    new SqlParameter("@DateId", SqlDbType.Int)
+                    {
+                        Value = dateId
+                    },
+                    new SqlParameter("@AmountId", SqlDbType.Int)
+                    {
+                        Value = amountId
+                    },
+                    new SqlParameter("@DescriptionId", SqlDbType.Int)
+                    {
+                        Value = descriptionId
+                    },
+                    new SqlParameter("@IsCredit", SqlDbType.Bit)
+                    {
+                        Value = isCredit
+                    }
+                }
+            };
+
+            int numRowsAffected = await sqlDataAccess.Update(storedProcedure, connectionString);
+
+            return numRowsAffected;
+        }
+
+        public async Task<int> DeleteLineItemById(int lineItemId,
+            string connectionString)
+        {
+            SqlDataAccess sqlDataAccess = new SqlDataAccess();
+
+            StoredProcedureModel storedProcedure = new StoredProcedureModel()
+            {
+                NameOfStoredProcedure = "dbo.spBudgets_DeleteLineItemById",
+
+                SqlParameterList = new List<SqlParameter>()
+                {
+                    new SqlParameter("@LineItemId", SqlDbType.Int)
+                    {
+                        Value = lineItemId
+                    }
+                }
+            };
+
+            int numRowsAffected = await sqlDataAccess.Delete(storedProcedure, connectionString);
+
+            return numRowsAffected;
+        }
     }
 }

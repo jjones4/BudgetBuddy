@@ -67,7 +67,7 @@ namespace BudgetBuddyUI.Controllers
             // and get the new Id
             if (dates.Count == 0)
             {
-                sqlDataTranslator.AddNewDateToDatesTable(budget.Transaction.DateOfTransaction,
+                await sqlDataTranslator.AddNewDateToDatesTable(budget.Transaction.DateOfTransaction,
                     _config.GetConnectionString("BudgetDataDbConnectionString"));
 
                 // If we had to add a new date to the dates table, then we need its new Id
@@ -83,7 +83,7 @@ namespace BudgetBuddyUI.Controllers
             // and get the new Id
             if (amounts.Count == 0)
             {
-                sqlDataTranslator.AddNewAmountToAmountsTable(budget.Transaction.AmountOfTransaction,
+                await sqlDataTranslator.AddNewAmountToAmountsTable(budget.Transaction.AmountOfTransaction,
                     _config.GetConnectionString("BudgetDataDbConnectionString"));
 
                 // If we had to add a new amount to our amounts table
@@ -99,7 +99,7 @@ namespace BudgetBuddyUI.Controllers
             // and get the new Id
             if (descriptions.Count == 0)
             {
-                sqlDataTranslator.AddNewDescriptionToDescriptionsTable(budget.Transaction.DescriptionOfTransaction,
+                await sqlDataTranslator.AddNewDescriptionToDescriptionsTable(budget.Transaction.DescriptionOfTransaction,
                     _config.GetConnectionString("BudgetDataDbConnectionString"));
 
                 // If we had to add a new description to our descriptions table
@@ -110,7 +110,7 @@ namespace BudgetBuddyUI.Controllers
             // 5. We already have T/F coming from budget.IsCredit
 
             // 6. Insert into the budget table
-            sqlDataTranslator.AddNewLineItemToBudgetsTable(
+            await sqlDataTranslator.AddNewLineItemToBudgetsTable(
                 budget.BudgetId,
                 dates.First().Id,
                 amounts.First().Id,
@@ -241,10 +241,16 @@ namespace BudgetBuddyUI.Controllers
             string lineItemDescription,
             bool isCredit)
         {
+
+            if (ModelState.IsValid == false)
+            {
+                return View();
+            }
+
             EditViewModel editViewModel = new EditViewModel();
 
             editViewModel.BudgetName = budgetName;
-            
+
             LineItemModel lineItem = new LineItemModel();
 
             lineItem.Id = lineItemId;
@@ -257,6 +263,90 @@ namespace BudgetBuddyUI.Controllers
             editViewModel.Transaction = lineItem;
 
             return View(editViewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(int lineItemId, EditViewModel editViewModel)
+        {
+            SqlDataTranslator sqlDataTranslator = new SqlDataTranslator();
+
+            // We need the lineItemId, DateId, AmountId, DescriptionId, and Credit (T/F)
+
+            // 1. We already have the Id for the line item: lineItemId
+
+            // 2. We need to check the date table to see if the date already exists.
+            //    If the date already exists, we need to get its Id, otherwise,
+            //    we need to add the date to the date table and return the Id
+            List<DateModel> dates = await sqlDataTranslator.GetDateRowsByDate(editViewModel.Transaction.DateOfTransaction,
+                _config.GetConnectionString("BudgetDataDbConnectionString"));
+
+            // If the date is not found, we will add it to the dates table
+            // and get the new Id
+            if (dates.Count == 0)
+            {
+                await sqlDataTranslator.AddNewDateToDatesTable(editViewModel.Transaction.DateOfTransaction,
+                    _config.GetConnectionString("BudgetDataDbConnectionString"));
+
+                // If we had to add a new date to the dates table, then we need its new Id
+                dates = await sqlDataTranslator.GetDateRowsByDate(editViewModel.Transaction.DateOfTransaction,
+                _config.GetConnectionString("BudgetDataDbConnectionString"));
+            }
+
+            // 3. Same as #2 for AmountId
+            List<AmountModel> amounts = await sqlDataTranslator.GetAmountRowsByAmount(editViewModel.Transaction.AmountOfTransaction,
+                _config.GetConnectionString("BudgetDataDbConnectionString"));
+
+            // If the amount is not found, we will add it to the amounts table
+            // and get the new Id
+            if (amounts.Count == 0)
+            {
+                await sqlDataTranslator.AddNewAmountToAmountsTable(editViewModel.Transaction.AmountOfTransaction,
+                    _config.GetConnectionString("BudgetDataDbConnectionString"));
+
+                // If we had to add a new amount to our amounts table
+                amounts = await sqlDataTranslator.GetAmountRowsByAmount(editViewModel.Transaction.AmountOfTransaction,
+                _config.GetConnectionString("BudgetDataDbConnectionString"));
+            }
+
+            // 4. Same as #2 and #3 for the DesciptionId
+            List<DescriptionModel> descriptions = await sqlDataTranslator.GetDescriptionRowsByDescription(editViewModel.Transaction.DescriptionOfTransaction,
+                _config.GetConnectionString("BudgetDataDbConnectionString"));
+
+            // If the description is not found, we will add it to the descriptions table
+            // and get the new Id
+            if (descriptions.Count == 0)
+            {
+                await sqlDataTranslator.AddNewDescriptionToDescriptionsTable(editViewModel.Transaction.DescriptionOfTransaction,
+                    _config.GetConnectionString("BudgetDataDbConnectionString"));
+
+                // If we had to add a new description to our descriptions table
+                descriptions = await sqlDataTranslator.GetDescriptionRowsByDescription(editViewModel.Transaction.DescriptionOfTransaction,
+                _config.GetConnectionString("BudgetDataDbConnectionString"));
+            }
+
+            // 5. We already have Credit because it is a bit (no need to go to a different table for it)
+
+            // 6. Update the line item in the budget table
+
+            await sqlDataTranslator.UpdateLineItemInBudgetsTable(
+                lineItemId,
+                dates.First().Id,
+                amounts.First().Id,
+                descriptions.First().Id,
+                editViewModel.Transaction.IsCredit,
+                _config.GetConnectionString("BudgetDataDbConnectionString"));
+
+            return RedirectToAction("Read");
+        }
+
+        public async Task<IActionResult> Delete(int lineItemId)
+        {
+            SqlDataTranslator sqlDataTranslator = new SqlDataTranslator();
+
+            await sqlDataTranslator.DeleteLineItemById(lineItemId,
+                _config.GetConnectionString("BudgetDataDbConnectionString"));
+
+            return RedirectToAction("Read");
         }
     }
 }

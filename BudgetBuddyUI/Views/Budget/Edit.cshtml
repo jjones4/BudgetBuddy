@@ -13,7 +13,7 @@
 
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-            <input type="hidden" name="budgetId" value="@Model.Transaction.Id" />
+            <input type="hidden" name="lineItemId" value="@Model.Transaction.Id" />
             <input type="hidden" name="budgetName" value="@Model.BudgetName" />
 
             <div class="form-group">
@@ -43,6 +43,16 @@
             <br />
 
             <div class="form-group">
+                <!-- 
+                <input type="hidden" name="lineItemId" value="@Model.Transaction.Id" />
+                <input type="hidden" name="lineItemBudgetId" value="@Model.Transaction.UserBudgetId" />
+                <input type="hidden" name="lineItemDate" value="@Model.Transaction.DateOfTransaction" />
+                <input type="hidden" name="lineItemAmount" value="@Model.Transaction.AmountOfTransaction" />
+                <input type="hidden" name="lineItemDescription" value="@Model.Transaction.DescriptionOfTransaction" />
+                <input type="hidden" name="lineItemIsCredit" value="@Model.Transaction.IsCredit" />
+
+                -->
+                
                 <input type="submit" value="Update Line Item" class="btn btn-primary" />
             </div>
         </form>
