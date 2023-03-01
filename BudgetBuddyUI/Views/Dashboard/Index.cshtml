@@ -9,72 +9,89 @@
 
 <br />
 
-<h3>Your Budgets</h3>
+@if (Model is null)
+{
+    <p>You haven't created any budgets yet.</p>
+}
+else
+{
+    <form asp-action="Create" method="get" class="col-md-2">
+        <div class="form-group">
+            <input type="hidden" name="userId" value="@Model.First().UserId" />
+            <input type="submit" value="Create a New Budget" class="btn btn-primary" />
+        </div>
+    </form>
 
-<table class="table table-striped w-auto">
-    <thead class="thead-dark">
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.BudgetName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsDefaultBudget)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Threshhold)
-            </th>
-            <th>
-            </th>
-            <th>
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.ToList())
-        {
+    <br />
+
+    <h3>Your Budgets</h3>
+
+    <table class="table table-striped w-auto">
+        <thead class="thead-dark">
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Id)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.BudgetName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.IsDefaultBudget)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Threshhold)
-                </td>
-                <td>
-                    <form asp-action="Edit" method="get" class="col-md-2">
-                        <div class="form-group">
-                            <input type="hidden" name="budgetId" value="@item.Id" />
-                            <input type="hidden" name="budgetName" value="@item.BudgetName" />
-                            <input type="hidden" name="isDefaultBudget" value="@item.IsDefaultBudget" />
-                            <input type="hidden" name="threshhold" value="@item.Threshhold" />
-                            <input type="submit" value="Edit" class="btn btn-primary" />
-                        </div>
-                    </form>
-                </td>
-                <td>
-                    <form asp-action="Delete" method="get" class="col-md-2">
-                        <div class="form-group">
-                            <input type="hidden" name="budgetId" value="@item.Id" />
-                            <input type="submit" value="Delete" class="btn btn-primary" />
-                        </div>
-                    </form>
-                </td>
+                <th>
+                    @Html.DisplayNameFor(model => model.Id)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.BudgetName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.IsDefaultBudget)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Threshhold)
+                </th>
+                <th>
+                </th>
+                <th>
+                </th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.ToList())
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Id)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.BudgetName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.IsDefaultBudget)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Threshhold)
+                    </td>
+                    <td>
+                        <form asp-action="Edit" method="get" class="col-md-2">
+                            <div class="form-group">
+                                <input type="hidden" name="budgetId" value="@item.Id" />
+                                <input type="hidden" name="budgetName" value="@item.BudgetName" />
+                                <input type="hidden" name="isDefaultBudget" value="@item.IsDefaultBudget" />
+                                <input type="hidden" name="threshhold" value="@item.Threshhold" />
+                                <input type="submit" value="Edit" class="btn btn-primary" />
+                            </div>
+                        </form>
+                    </td>
+                    <td>
+                        <form asp-action="Delete" method="get" class="col-md-2">
+                            <div class="form-group">
+                                <input type="hidden" name="budgetId" value="@item.Id" />
+                                <input type="submit" value="Delete" class="btn btn-primary" />
+                            </div>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 
-<br />
+    <br />
 
-<h3>Your Templates</h3>
+    <h3>Your Templates</h3>
+
+}
 
 @section Scripts {
     @{

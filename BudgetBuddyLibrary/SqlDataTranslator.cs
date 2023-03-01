@@ -429,6 +429,30 @@ namespace BudgetBuddyLibrary
             return budgetNames;
         }
 
+        public async Task<List<BudgetNameModel>> GetAllBudgetNames(string connectionString)
+        {
+            SqlDataAccess sqlDataAccess = new SqlDataAccess();
+
+            StoredProcedureModel storedProcedure = new StoredProcedureModel()
+            {
+                NameOfStoredProcedure = "dbo.spBudgetNames_GetBudgetNamesAll",
+            };
+
+            List<object[]> rawSqlRows = await sqlDataAccess.Read<BudgetNameModel>(storedProcedure, connectionString);
+            List<BudgetNameModel> budgetNames = new List<BudgetNameModel>();
+
+            foreach (object[] row in rawSqlRows)
+            {
+                budgetNames.Add(new BudgetNameModel()
+                {
+                    Id = (int)row[0],
+                    BudgetName = (string)row[1]
+                });
+            }
+
+            return budgetNames;
+        }
+
         public async Task<int> GetUserBudgetNameIdByLoggedInUserIdAndBudgetNameId(int loggedInUserId, int budgetNameId, string connectionString)
         {
             SqlDataAccess sqlDataAccess = new SqlDataAccess();

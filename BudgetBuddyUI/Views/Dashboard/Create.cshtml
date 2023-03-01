@@ -1,0 +1,52 @@
+﻿@model BudgetBuddyUI.Models.DashboardBudgetsTableModel
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create a new budget.</h1>
+
+<br />
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <input type="hidden" name="userId" value="@Model.UserId" />
+
+            <div class="form-group">
+                <label asp-for="BudgetName" class="control-label"></label>
+                <input asp-for="BudgetName" class="form-control" />
+                <span asp-validation-for="BudgetName" class="text-danger"></span>
+            </div>
+
+            <br />
+
+            <div class="form-group">
+                <label asp-for="IsDefaultBudget" class="control-label">Default Budget (Optional)</label>
+                <input asp-for="IsDefaultBudget" value="true" name="IsDefaultBudget" type="checkbox" checked" />
+                <span asp-validation-for="IsDefaultBudget" class="text-danger"></span>
+            </div>
+
+            <br />
+
+            <div class="form-group">
+                <label asp-for="Threshhold" class="control-label">Threshhold (Optional)</label>
+                <input asp-for="Threshhold" class="form-control" />
+                <span asp-validation-for="Threshhold" class="text-danger"></span>
+            </div>
+
+            <br />
+
+            <div class="form-group">
+                <input type="submit" value="Create New Budget" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
