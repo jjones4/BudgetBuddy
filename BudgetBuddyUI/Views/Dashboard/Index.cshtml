@@ -64,9 +64,10 @@ else
                         @Html.DisplayFor(modelItem => item.Threshhold)
                     </td>
                     <td>
-                        <form asp-action="Edit" method="get" class="col-md-2">
+                        <form asp-action="EditBudgetName" method="get" class="col-md-2">
                             <div class="form-group">
                                 <input type="hidden" name="budgetId" value="@item.Id" />
+                                <input type="hidden" name="userId" value="@item.UserId" />
                                 <input type="hidden" name="budgetName" value="@item.BudgetName" />
                                 <input type="hidden" name="isDefaultBudget" value="@item.IsDefaultBudget" />
                                 <input type="hidden" name="threshhold" value="@item.Threshhold" />

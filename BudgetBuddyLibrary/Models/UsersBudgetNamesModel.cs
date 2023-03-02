@@ -14,7 +14,7 @@ namespace BudgetBuddyLibrary.Models
 
         public int BudgetNameId { get; set; }
 
-        public bool IsDefaultBudget { get; set; } = false;
+        public bool IsDefaultBudget { get; set; }
 
         public decimal? Threshhold { get; set; }
     }

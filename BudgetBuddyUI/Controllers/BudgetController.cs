@@ -241,7 +241,6 @@ namespace BudgetBuddyUI.Controllers
             string lineItemDescription,
             bool isCredit)
         {
-
             if (ModelState.IsValid == false)
             {
                 return View();

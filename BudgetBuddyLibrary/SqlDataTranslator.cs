@@ -38,6 +38,28 @@ namespace BudgetBuddyLibrary
             return numRowsAffected;
         }
 
+        public async Task<int> AddNewBudgetNameToBudgetNamesTable(string budgetName, string connectionString)
+        {
+            SqlDataAccess sqlDataAccess = new SqlDataAccess();
+
+            StoredProcedureModel storedProcedure = new StoredProcedureModel()
+            {
+                NameOfStoredProcedure = "dbo.spBudgetNames_AddNewBudgetName",
+
+                SqlParameterList = new List<SqlParameter>()
+                {
+                    new SqlParameter("@BudgetName", SqlDbType.NVarChar)
+                    {
+                        Value = budgetName
+                    }
+                }
+            };
+
+            int numRowsAffected = await sqlDataAccess.Create(storedProcedure, connectionString);
+
+            return numRowsAffected;
+        }
+
         public async Task<int> AddNewLineItemToBudgetsTable(int budgetId, 
             int dateId,
             int amountId, 
@@ -147,6 +169,44 @@ namespace BudgetBuddyLibrary
             return numRowsAffected;
         }
 
+        public async Task<int> AddNewBudgetToUsersBudgetNamesTable(int userId,
+            int budgetNameId,
+            bool isDefaultBudget,
+            decimal? threshhold,
+            string connectionString)
+        {
+            SqlDataAccess sqlDataAccess = new SqlDataAccess();
+
+            StoredProcedureModel storedProcedure = new StoredProcedureModel()
+            {
+                NameOfStoredProcedure = "dbo.spUsersBudgetNames_AddNewBudget",
+
+                SqlParameterList = new List<SqlParameter>()
+                {
+                    new SqlParameter("@UserId", SqlDbType.Int)
+                    {
+                        Value = userId
+                    },
+                    new SqlParameter("@BudgetNameId", SqlDbType.Int)
+                    {
+                        Value = budgetNameId
+                    },
+                    new SqlParameter("@IsDefaultBudget", SqlDbType.Bit)
+                    {
+                        Value = isDefaultBudget
+                    },
+                    new SqlParameter("@Threshhold", SqlDbType.Money)
+                    {
+                        Value = threshhold
+                    }
+                }
+            };
+
+            int numRowsAffected = await sqlDataAccess.Create(storedProcedure, connectionString);
+
+            return numRowsAffected;
+        }
+
         public async Task<int> GetUserIdByAspNetUserId(string aspNetUserId, string connectionString)
         {
             SqlDataAccess sqlDataAccess = new SqlDataAccess();
@@ -182,6 +242,42 @@ namespace BudgetBuddyLibrary
             // There should only be one user that is returned
             // since AspNetUserId should be unique
             return users.First().Id;
+        }
+
+        public async Task<List<BudgetNameModel>> GetIdByBudgetName(string budgetName, string connectionString)
+        {
+            SqlDataAccess sqlDataAccess = new SqlDataAccess();
+
+            StoredProcedureModel storedProcedure = new StoredProcedureModel()
+            {
+                NameOfStoredProcedure = "dbo.spBudgetNames_GetIdByBudgetName",
+
+                SqlParameterList = new List<SqlParameter>()
+                {
+                    new SqlParameter("@BudgetName", SqlDbType.NVarChar)
+                    {
+                        Value = budgetName
+                    }
+                }
+            };
+
+            List<object[]> rawSqlRows = await sqlDataAccess.Read<UserModel>(storedProcedure, connectionString);
+            List<BudgetNameModel> users = new List<BudgetNameModel>();
+
+            // There should only be one budget id that is returned
+            // so this foreach loop may not be necessary
+            foreach (object[] row in rawSqlRows)
+            {
+                users.Add(new BudgetNameModel()
+                {
+                    Id = (int)row[0],
+                    BudgetName = (string)row[1]
+                });
+            }
+
+            // There should only be one user that is returned
+            // since AspNetUserId should be unique
+            return users;
         }
 
         public async Task<List<UsersBudgetNamesModel>> GetUsersBudgetNamesRowsByUserId(int userId, string connectionString)
@@ -557,6 +653,29 @@ namespace BudgetBuddyLibrary
                     new SqlParameter("@IsCredit", SqlDbType.Bit)
                     {
                         Value = isCredit
+                    }
+                }
+            };
+
+            int numRowsAffected = await sqlDataAccess.Update(storedProcedure, connectionString);
+
+            return numRowsAffected;
+        }
+
+        public async Task<int> ClearDefaultBudgetFlagsByUserId(int userId,
+            string connectionString)
+        {
+            SqlDataAccess sqlDataAccess = new SqlDataAccess();
+
+            StoredProcedureModel storedProcedure = new StoredProcedureModel()
+            {
+                NameOfStoredProcedure = "dbo.spUsersBudgetNames_ClearAllDefaultFlagsByUserId",
+
+                SqlParameterList = new List<SqlParameter>()
+                {
+                    new SqlParameter("@UserId", SqlDbType.Int)
+                    {
+                        Value = userId
                     }
                 }
             };

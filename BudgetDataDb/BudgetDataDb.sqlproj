@@ -83,5 +83,9 @@
     <Build Include="dbo\Stored Procedures\spBudgets_UpdateLineItemById.sql" />
     <Build Include="dbo\Stored Procedures\spBudgets_DeleteLineItemById.sql" />
     <Build Include="dbo\Stored Procedures\spBudgetNames_GetBudgetNamesAll.sql" />
+    <Build Include="dbo\Stored Procedures\spUsersBudgetNames_AddNewBudget.sql" />
+    <Build Include="dbo\Stored Procedures\spUsersBudgetNames_ClearAllDefaultFlagsByUserId.sql" />
+    <Build Include="dbo\Stored Procedures\spBudgetNames_AddNewBudgetName.sql" />
+    <Build Include="dbo\Stored Procedures\spBudgetNames_GetIdByBudgetName.sql" />
   </ItemGroup>
 </Project>

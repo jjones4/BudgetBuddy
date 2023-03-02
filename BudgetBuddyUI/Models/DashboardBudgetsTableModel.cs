@@ -18,7 +18,7 @@ namespace BudgetBuddyUI.Models
         public string BudgetName { get; set; } = string.Empty;
 
         [DisplayName("Default Budget")]
-        public bool IsDefaultBudget { get; set; } = false;
+        public bool IsDefaultBudget { get; set; }
 
         [Range(0, 999999999999.99)]
         [DataType(DataType.Currency)]

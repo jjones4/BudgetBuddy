@@ -1,0 +1,49 @@
+﻿@model BudgetBuddyUI.Models.DashboardBudgetsTableModel
+@{
+    ViewData["Title"] = "EditBudget";
+}
+
+<h1>Edit the name of your budget.</h1>
+
+<br />
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="EditBudgetName">
+
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <input type="hidden" name="budgetId" value="@Model.Id" />
+
+            <div class="form-group">
+                <label asp-for="BudgetName" class="control-label"></label>
+                <input asp-for="BudgetName" class="form-control" />
+                <span asp-validation-for="BudgetName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="IsDefaultBudget" class="control-label"></label>
+                <input asp-for="IsDefaultBudget" type="checkbox" name="IsDefaultBudget">
+                <span asp-validation-for="IsDefaultBudget" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Threshhold" class="control-label"></label>
+                <input asp-for="Threshhold" class="form-control" />
+                <span asp-validation-for="Threshhold" class="text-danger"></span>
+            </div>
+
+            <br />
+
+            <div class="form-group">
+                <input type="submit" value="Update Budget Name" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
