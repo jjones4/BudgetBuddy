@@ -60,6 +60,11 @@ namespace BudgetBuddyUI.Controllers
                     });
             }
 
+            if (usersBudgetNames.Count == 0)
+            {
+                return View();
+            }
+
             return View(dashboardBudgetsTableModel);
         }
 
@@ -284,6 +289,17 @@ namespace BudgetBuddyUI.Controllers
                 newBudgetId,
                 dashboardBudgetsTableModel.IsDefaultBudget,
                 dashboardBudgetsTableModel.Threshhold,
+                _config.GetConnectionString("BudgetDataDbConnectionString"));
+
+            return RedirectToAction("Index");
+        }
+
+        public async Task<IActionResult> Delete(int budgetId)
+        {
+            SqlDataTranslator sqlDataTranslator = new SqlDataTranslator();
+
+            await sqlDataTranslator.DeleteBudgetById(
+                budgetId,
                 _config.GetConnectionString("BudgetDataDbConnectionString"));
 
             return RedirectToAction("Index");

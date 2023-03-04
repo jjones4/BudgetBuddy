@@ -176,12 +176,18 @@ namespace BudgetBuddyUI.Controllers
 
                 budget.Transactions = defaultLineItems;
 
+                
                 return View(budget);
             }
 
             budget.BudgetName = "No budget was found.";
 
-            return View(budget);
+            if (usersBudgetNames.Count == 0)
+            {
+                return View();
+            }
+
+            return View();
         }
 
         [HttpPost]

@@ -89,5 +89,6 @@
     <Build Include="dbo\Stored Procedures\spBudgetNames_GetIdByBudgetName.sql" />
     <Build Include="dbo\Stored Procedures\spBudgets_GetLineItemById.sql" />
     <Build Include="dbo\Stored Procedures\spUsersBudgetNames_UpdateById.sql" />
+    <Build Include="dbo\Stored Procedures\spBudgets_DeleteById.sql" />
   </ItemGroup>
 </Project>

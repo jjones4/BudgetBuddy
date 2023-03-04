@@ -780,5 +780,28 @@ namespace BudgetBuddyLibrary
 
             return numRowsAffected;
         }
+
+        public async Task<int> DeleteBudgetById(int budgetId,
+            string connectionString)
+        {
+            SqlDataAccess sqlDataAccess = new SqlDataAccess();
+
+            StoredProcedureModel storedProcedure = new StoredProcedureModel()
+            {
+                NameOfStoredProcedure = "dbo.spBudgets_DeleteById",
+
+                SqlParameterList = new List<SqlParameter>()
+                {
+                    new SqlParameter("@Id", SqlDbType.Int)
+                    {
+                        Value = budgetId
+                    }
+                }
+            };
+
+            int numRowsAffected = await sqlDataAccess.Delete(storedProcedure, connectionString);
+
+            return numRowsAffected;
+        }
     }
 }
