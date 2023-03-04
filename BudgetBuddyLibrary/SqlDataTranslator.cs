@@ -244,6 +244,41 @@ namespace BudgetBuddyLibrary
             return users.First().Id;
         }
 
+        public async Task<LineItemModel> GetIsCreditByLineItemId(int lineItemId, string connectionString)
+        {
+            SqlDataAccess sqlDataAccess = new SqlDataAccess();
+
+            StoredProcedureModel storedProcedure = new StoredProcedureModel()
+            {
+                NameOfStoredProcedure = "dbo.spBudgets_GetLineItemById",
+
+                SqlParameterList = new List<SqlParameter>()
+                {
+                    new SqlParameter("@Id", SqlDbType.Int)
+                    {
+                        Value = lineItemId
+                    }
+                }
+            };
+
+            List<object[]> rawSqlRows = await sqlDataAccess.Read<LineItemModel>(storedProcedure, connectionString);
+            List<LineItemModel> lineItems = new List<LineItemModel>();
+
+            // There should only be one line item that is returned
+            // so this foreach loop may not be necessary
+            foreach (object[] row in rawSqlRows)
+            {
+                lineItems.Add(new LineItemModel()
+                {
+                    IsCredit = (bool)row[0]
+                });
+            }
+
+            // There should only be one line item that is returned
+            // since AspNetUserId should be unique
+            return lineItems.First();
+        }
+
         public async Task<List<BudgetNameModel>> GetIdByBudgetName(string budgetName, string connectionString)
         {
             SqlDataAccess sqlDataAccess = new SqlDataAccess();
@@ -653,6 +688,44 @@ namespace BudgetBuddyLibrary
                     new SqlParameter("@IsCredit", SqlDbType.Bit)
                     {
                         Value = isCredit
+                    }
+                }
+            };
+
+            int numRowsAffected = await sqlDataAccess.Update(storedProcedure, connectionString);
+
+            return numRowsAffected;
+        }
+
+        public async Task<int> UpdateUsersBudgetNameById(int budgetId,
+            int budgetNameId,
+            bool isDefaultBudget,
+            decimal? threshhold,
+            string connectionString)
+        {
+            SqlDataAccess sqlDataAccess = new SqlDataAccess();
+
+            StoredProcedureModel storedProcedure = new StoredProcedureModel()
+            {
+                NameOfStoredProcedure = "dbo.spUsersBudgetNames_UpdateById",
+
+                SqlParameterList = new List<SqlParameter>()
+                {
+                    new SqlParameter("@Id", SqlDbType.Int)
+                    {
+                        Value = budgetId
+                    },
+                    new SqlParameter("@BudgetNameId", SqlDbType.Int)
+                    {
+                        Value = budgetNameId
+                    },
+                    new SqlParameter("@IsDefaultBudget", SqlDbType.Bit)
+                    {
+                        Value = isDefaultBudget
+                    },
+                    new SqlParameter("@Threshhold", SqlDbType.Money)
+                    {
+                        Value = threshhold
                     }
                 }
             };

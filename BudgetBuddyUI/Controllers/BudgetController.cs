@@ -233,19 +233,13 @@ namespace BudgetBuddyUI.Controllers
             return View(budgetViewModel);
         }
 
-        public IActionResult Edit(string budgetName,
+        public async Task<IActionResult> Edit(string budgetName,
             int lineItemId,
             int lineItemBudgetId,
             DateTime lineItemDate,
             Decimal lineItemAmount,
-            string lineItemDescription,
-            bool isCredit)
+            string lineItemDescription)
         {
-            if (ModelState.IsValid == false)
-            {
-                return View();
-            }
-
             EditViewModel editViewModel = new EditViewModel();
 
             editViewModel.BudgetName = budgetName;
@@ -257,7 +251,14 @@ namespace BudgetBuddyUI.Controllers
             lineItem.DateOfTransaction = lineItemDate;
             lineItem.AmountOfTransaction = lineItemAmount;
             lineItem.DescriptionOfTransaction = lineItemDescription;
-            lineItem.IsCredit = isCredit;
+
+            SqlDataTranslator sqlDataTranslator = new SqlDataTranslator();
+
+            LineItemModel tempLineItem = await sqlDataTranslator.GetIsCreditByLineItemId(
+                lineItemId,
+                _config.GetConnectionString("BudgetDataDbConnectionString"));
+
+            lineItem.IsCredit = tempLineItem.IsCredit;
 
             editViewModel.Transaction = lineItem;
 

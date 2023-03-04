@@ -172,13 +172,21 @@ namespace BudgetBuddyUI.Controllers
             return RedirectToAction("Index");
         }
 
-        public IActionResult EditBudgetName(
+        public async Task<IActionResult> EditBudgetName(
             int budgetId,
             int userId,
             string budgetName,
-            bool isDefaultBudget,
             decimal threshhold)
         {
+            SqlDataTranslator sqlDataTranslator = new SqlDataTranslator();
+
+            List<UsersBudgetNamesModel> usersBudgetNamesModels = await
+                sqlDataTranslator.GetUsersBudgetNamesRowsByUserId(
+                    userId,
+                    _config.GetConnectionString("BudgetDataDbConnectionString"));
+
+            bool isDefaultBudget = usersBudgetNamesModels.Where(x => x.Id == budgetId).First().IsDefaultBudget;
+
             DashboardBudgetsTableModel dashboardBurdgetsTableModel = new DashboardBudgetsTableModel()
             {
                 Id = budgetId,
@@ -192,9 +200,91 @@ namespace BudgetBuddyUI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> EditBudgetName(DashboardBudgetsTableModel dashboardBudgetsTableModel)
+        public async Task<IActionResult> EditBudgetName(int budgetId, int userId, DashboardBudgetsTableModel dashboardBudgetsTableModel)
         {
-            var test = dashboardBudgetsTableModel;
+            // Once the user has posted an edit to their budget dashboard, we need to check two things:
+            // 1. If the user already has a budget with the same name, then we don't need to change it
+            // 2. If the posted budget name already exists in the BudgetNames table (we don't need to add it)
+            //    We just need to know the Id of the budget name that already exists.
+
+            SqlDataTranslator sqlDataTranslator = new SqlDataTranslator();
+
+            List<BudgetNameModel> userBudgetNames = await sqlDataTranslator.GetBudgetNamesByLoggedInUserId(
+                dashboardBudgetsTableModel.UserId,
+                _config.GetConnectionString("BudgetDataDbConnectionString"));
+
+            // 2. If the new budget name already exists in the BudgetNames table (we don't need to add it)
+            //    We just need to know the Id of the budget name that already exists so we can add the Id
+            //    to the UsersBudgetNames table
+            List<BudgetNameModel> allBudgetNames = await sqlDataTranslator.GetAllBudgetNames(
+                _config.GetConnectionString("BudgetDataDbConnectionString"));
+
+            foreach (BudgetNameModel budget in allBudgetNames)
+            {
+                // If the user tries to add a new budget with a name that already exists in the BudgetNames
+                // table, we just need to get the Id of that budget and add a new row to the
+                // UsersBudgetNames table
+                if (budget.BudgetName == dashboardBudgetsTableModel.BudgetName)
+                {
+                    // If the user is trying to set this new budget as their default budget,
+                    // we need to remove the default value from the other budget and set this
+                    // one as the default
+                    if (dashboardBudgetsTableModel.IsDefaultBudget == true)
+                    {
+                        await sqlDataTranslator.ClearDefaultBudgetFlagsByUserId(
+                            userId,
+                            _config.GetConnectionString("BudgetDataDbConnectionString"));
+                    }
+
+                    // If we find the name of the budget in the budget names table,
+                    // we need its Id
+                    await sqlDataTranslator.UpdateUsersBudgetNameById(
+                        budgetId,
+                        budget.Id,
+                        dashboardBudgetsTableModel.IsDefaultBudget,
+                        dashboardBudgetsTableModel.Threshhold,
+                        _config.GetConnectionString("BudgetDataDbConnectionString"));
+
+                    return RedirectToAction("Index");
+                }
+            }
+
+            // If we reached this point and have not been redirected to the budget dashboard,
+            // then the user has entered a brand new budget name that does not exist in the BudgetNames table
+            // We need to:
+            // 1. Add a new entry to the BudgetNames table for the new budget name
+            // 2. Get the Id of the new budget name
+            // 3. Add a new entry to the UsersBudgetNames table for the new budget
+            // 4. Check if the user has selected this new budget as the default budget,
+            // 5. Set the IsDefault flag to false for the old budget from the
+            //    UsersBudgetNames table
+            await sqlDataTranslator.AddNewBudgetNameToBudgetNamesTable(
+                dashboardBudgetsTableModel.BudgetName,
+                _config.GetConnectionString("BudgetDataDbConnectionString"));
+
+            // Get the Id of the newly added budget name
+            List<BudgetNameModel> budgetNames = await sqlDataTranslator.GetIdByBudgetName(
+                dashboardBudgetsTableModel.BudgetName,
+                _config.GetConnectionString("BudgetDataDbConnectionString"));
+
+            int newBudgetId = budgetNames.First().Id;
+
+            // If the user is trying to set this new budget as their default budget,
+            // we need to remove the default value from the other budget and set this
+            // one as the default
+            if (dashboardBudgetsTableModel.IsDefaultBudget == true)
+            {
+                await sqlDataTranslator.ClearDefaultBudgetFlagsByUserId(
+                    userId,
+                    _config.GetConnectionString("BudgetDataDbConnectionString"));
+            }
+
+            await sqlDataTranslator.UpdateUsersBudgetNameById(
+                budgetId,
+                newBudgetId,
+                dashboardBudgetsTableModel.IsDefaultBudget,
+                dashboardBudgetsTableModel.Threshhold,
+                _config.GetConnectionString("BudgetDataDbConnectionString"));
 
             return RedirectToAction("Index");
         }

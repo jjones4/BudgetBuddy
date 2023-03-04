@@ -13,6 +13,7 @@
 
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
+            <input type="hidden" name="userId" value="@Model.UserId" />
             <input type="hidden" name="budgetId" value="@Model.Id" />
 
             <div class="form-group">
@@ -21,11 +22,15 @@
                 <span asp-validation-for="BudgetName" class="text-danger"></span>
             </div>
 
+            <br />
+
             <div class="form-group">
                 <label asp-for="IsDefaultBudget" class="control-label"></label>
                 <input asp-for="IsDefaultBudget" type="checkbox" name="IsDefaultBudget">
                 <span asp-validation-for="IsDefaultBudget" class="text-danger"></span>
             </div>
+
+            <br />
 
             <div class="form-group">
                 <label asp-for="Threshhold" class="control-label"></label>

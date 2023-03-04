@@ -33,6 +33,6 @@ namespace BudgetBuddyLibrary.Models
         public string DescriptionOfTransaction { get; set; } = string.Empty;
 
         [DisplayName("Credit")]
-        public bool IsCredit { get; set; } = false;
+        public bool IsCredit { get; set; }
     }
 }
