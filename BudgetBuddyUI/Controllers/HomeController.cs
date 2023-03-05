@@ -46,7 +46,14 @@ namespace BudgetBuddyUI.Controllers
                 _config.GetConnectionString("BudgetDataDbConnectionString"));
 
             int defaultBudgetId = DefaultBudget.GetDefaultBudgetId(usersBudgetNames);
-            
+
+            decimal? defaultBudgetThreshhold = null;
+            // Get the threshhold amount (if any) based on the default budget Id
+            if (defaultBudgetId != 0)
+            {
+                defaultBudgetThreshhold = usersBudgetNames.Where(x => x.Id == defaultBudgetId).First().Threshhold;
+            }
+
             // If there is a default (or first) budget, get the line items
             // If there is not a default (or first) budget, don't go to the database,
             // and also leave the list empty so we can check this later
@@ -59,12 +66,14 @@ namespace BudgetBuddyUI.Controllers
                     _config.GetConnectionString("BudgetDataDbConnectionString"));
 
                 List<LineItemModel> creditLineItems = 
-                    defaultLineItems.Where(x => x.IsCredit == true).ToList();
+                    defaultLineItems.Where(x => x.IsCredit == true && x.AmountOfTransaction < defaultBudgetThreshhold).ToList();
+
                 List<PartialOverviewLineModel> creditPartialOverview = 
                     OverviewCalculator.SumsByMonth(creditLineItems);
 
                 List<LineItemModel> debitLineItems = 
-                    defaultLineItems.Where(x => x.IsCredit == false).ToList();
+                    defaultLineItems.Where(x => x.IsCredit == false && x.AmountOfTransaction < defaultBudgetThreshhold).ToList();
+
                 List<PartialOverviewLineModel> debitPartialOverview = 
                     OverviewCalculator.SumsByMonth(debitLineItems);
 
@@ -184,6 +193,13 @@ namespace BudgetBuddyUI.Controllers
 
             int defaultBudgetId = DefaultBudget.GetDefaultBudgetId(usersBudgetNames);
 
+            decimal? defaultBudgetThreshhold = null;
+            // Get the threshhold amount (if any) based on the default budget Id
+            if (defaultBudgetId != 0)
+            {
+                defaultBudgetThreshhold = usersBudgetNames.Where(x => x.Id == defaultBudgetId).First().Threshhold;
+            }
+
             // If there is a default (or first) budget, get the line items
             // If there is not a default (or first) budget, don't go to the database,
             // and also leave the list empty so we can check this later
@@ -196,12 +212,12 @@ namespace BudgetBuddyUI.Controllers
                     _config.GetConnectionString("BudgetDataDbConnectionString"));
 
                 List<LineItemModel> creditLineItems =
-                    defaultLineItems.Where(x => x.IsCredit == true).ToList();
+                    defaultLineItems.Where(x => x.IsCredit == true && x.AmountOfTransaction < defaultBudgetThreshhold).ToList();
                 List<PartialOverviewLineModel> creditPartialOverview =
                     OverviewCalculator.SumsByMonth(creditLineItems);
 
                 List<LineItemModel> debitLineItems =
-                    defaultLineItems.Where(x => x.IsCredit == false).ToList();
+                    defaultLineItems.Where(x => x.IsCredit == false && x.AmountOfTransaction < defaultBudgetThreshhold).ToList();
                 List<PartialOverviewLineModel> debitPartialOverview =
                     OverviewCalculator.SumsByMonth(debitLineItems);
 
