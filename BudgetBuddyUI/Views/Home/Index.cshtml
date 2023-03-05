@@ -1,4 +1,4 @@
-﻿@model IEnumerable<BudgetBuddyUI.Models.OverviewModel>
+﻿@model BudgetBuddyUI.Models.OverviewPageModel
 @{
     ViewData["Title"] = "Home Page";
 }
@@ -21,24 +21,24 @@ else
         <thead class="thead-dark">
             <tr>
                 <th>
-                    @Html.DisplayNameFor(model => model.ToList()[0].MonthlySummaries.First().MonthName)
+                    @Html.DisplayNameFor(model => model.OverviewModels.ToList()[0].MonthlySummaries.First().MonthName)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.ToList()[0].MonthlySummaries.First().YearOfTransaction)
+                    @Html.DisplayNameFor(model => model.OverviewModels.ToList()[0].MonthlySummaries.First().YearOfTransaction)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.ToList()[0].MonthlySummaries.First().IncomeAmount)
+                    @Html.DisplayNameFor(model => model.OverviewModels.ToList()[0].MonthlySummaries.First().IncomeAmount)
                 </th>
                     <th>
-                    @Html.DisplayNameFor(model => model.ToList()[0].MonthlySummaries.First().ExpenseAmaount)
+                    @Html.DisplayNameFor(model => model.OverviewModels.ToList()[0].MonthlySummaries.First().ExpenseAmaount)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.ToList()[0].MonthlySummaries.First().MarginAmount)
+                    @Html.DisplayNameFor(model => model.OverviewModels.ToList()[0].MonthlySummaries.First().MarginAmount)
                 </th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model.ToList()[0].MonthlySummaries)
+            @foreach (var item in Model.OverviewModels.ToList()[0].MonthlySummaries)
             {
                 <tr>
                     <td>
@@ -60,36 +60,36 @@ else
             }
             <tr>
                 <td>
-                    @Html.DisplayFor(model => model.ToList()[0].Totals.MonthName)
+                    @Html.DisplayFor(model => model.OverviewModels.ToList()[0].Totals.MonthName)
                 </td>
                 <td>
                     
                 </td>
                 <td>
-                    @Html.DisplayFor(model => model.ToList()[0].Totals.IncomeAmount)
+                    @Html.DisplayFor(model => model.OverviewModels.ToList()[0].Totals.IncomeAmount)
                 </td>
                 <td>
-                    @Html.DisplayFor(model => model.ToList()[0].Totals.ExpenseAmaount)
+                    @Html.DisplayFor(model => model.OverviewModels.ToList()[0].Totals.ExpenseAmaount)
                 </td>
                 <td>
-                    @Html.DisplayFor(model => model.ToList()[0].Totals.MarginAmount)
+                    @Html.DisplayFor(model => model.OverviewModels.ToList()[0].Totals.MarginAmount)
                 </td>
             </tr>
             <tr>
                 <td>
-                    @Html.DisplayFor(model => model.ToList()[0].Averages.MonthName)
+                    @Html.DisplayFor(model => model.OverviewModels.ToList()[0].Averages.MonthName)
                 </td>
                 <td>
                     
                 </td>
                 <td>
-                    @Html.DisplayFor(model => model.ToList()[0].Averages.IncomeAmount)
+                    @Html.DisplayFor(model => model.OverviewModels.ToList()[0].Averages.IncomeAmount)
                 </td>
                 <td>
-                    @Html.DisplayFor(model => model.ToList()[0].Averages.ExpenseAmaount)
+                    @Html.DisplayFor(model => model.OverviewModels.ToList()[0].Averages.ExpenseAmaount)
                 </td>
                 <td>
-                    @Html.DisplayFor(model => model.ToList()[0].Averages.MarginAmount)
+                    @Html.DisplayFor(model => model.OverviewModels.ToList()[0].Averages.MarginAmount)
                 </td>
             </tr>
         </tbody>
@@ -98,7 +98,29 @@ else
     <br />
     <br />
 
-    <h3>Projections (Inflation)</h3>
+    <h3>Projections (Inflation, Default = 8%)</h3>
+    <br />
+
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="Index">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="form-group">
+                    <label asp-for="@Model.InflationPercentage" class="control-label"></label>
+                    <input asp-for="@Model.InflationPercentage" class="control-label" />
+                    <span asp-validation-for="@Model.InflationPercentage" class="text-danger"></span>
+                </div>
+
+                <br />
+
+                <div class="form-group">
+                    <input type="submit" value="Recalculate for Inflation" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
+
     <br />
 
     // Projections table
@@ -106,24 +128,24 @@ else
         <thead class="thead-dark">
             <tr>
                 <th>
-                    @Html.DisplayNameFor(model => model.ToList()[1].MonthlySummaries.First().MonthName)
+                    @Html.DisplayNameFor(model => model.OverviewModels.ToList()[1].MonthlySummaries.First().MonthName)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.ToList()[1].MonthlySummaries.First().YearOfTransaction)
+                    @Html.DisplayNameFor(model => model.OverviewModels.ToList()[1].MonthlySummaries.First().YearOfTransaction)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.ToList()[1].MonthlySummaries.First().IncomeAmount)
+                    @Html.DisplayNameFor(model => model.OverviewModels.ToList()[1].MonthlySummaries.First().IncomeAmount)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.ToList()[1].MonthlySummaries.First().ExpenseAmaount)
+                    @Html.DisplayNameFor(model => model.OverviewModels.ToList()[1].MonthlySummaries.First().ExpenseAmaount)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.ToList()[1].MonthlySummaries.First().MarginAmount)
+                    @Html.DisplayNameFor(model => model.OverviewModels.ToList()[1].MonthlySummaries.First().MarginAmount)
                 </th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model.ToList()[1].MonthlySummaries)
+            @foreach (var item in Model.OverviewModels.ToList()[1].MonthlySummaries)
             {
                 <tr>
                     <td>
@@ -145,34 +167,34 @@ else
             }
             <tr>
                 <td>
-                    @Html.DisplayFor(model => model.ToList()[1].Totals.MonthName)
+                    @Html.DisplayFor(model => model.OverviewModels.ToList()[1].Totals.MonthName)
                 </td>
                 <td>
                 </td>
                 <td>
-                    @Html.DisplayFor(model => model.ToList()[1].Totals.IncomeAmount)
+                    @Html.DisplayFor(model => model.OverviewModels.ToList()[1].Totals.IncomeAmount)
                 </td>
                 <td>
-                    @Html.DisplayFor(model => model.ToList()[1].Totals.ExpenseAmaount)
+                    @Html.DisplayFor(model => model.OverviewModels.ToList()[1].Totals.ExpenseAmaount)
                 </td>
                 <td>
-                    @Html.DisplayFor(model => model.ToList()[1].Totals.MarginAmount)
+                    @Html.DisplayFor(model => model.OverviewModels.ToList()[1].Totals.MarginAmount)
                 </td>
             </tr>
             <tr>
                 <td>
-                    @Html.DisplayFor(model => model.ToList()[1].Averages.MonthName)
+                    @Html.DisplayFor(model => model.OverviewModels.ToList()[1].Averages.MonthName)
                 </td>
                 <td>
                 </td>
                 <td>
-                    @Html.DisplayFor(model => model.ToList()[1].Averages.IncomeAmount)
+                    @Html.DisplayFor(model => model.OverviewModels.ToList()[1].Averages.IncomeAmount)
                 </td>
                 <td>
-                    @Html.DisplayFor(model => model.ToList()[1].Averages.ExpenseAmaount)
+                    @Html.DisplayFor(model => model.OverviewModels.ToList()[1].Averages.ExpenseAmaount)
                 </td>
                 <td>
-                    @Html.DisplayFor(model => model.ToList()[1].Averages.MarginAmount)
+                    @Html.DisplayFor(model => model.OverviewModels.ToList()[1].Averages.MarginAmount)
                 </td>
             </tr>
         </tbody>
@@ -189,15 +211,15 @@ else
         <thead class="thead-dark">
             <tr>
                 <th>
-                    @Html.DisplayNameFor(model => model.ToList()[0].Highlights.First().NameOfExpenditure)
+                    @Html.DisplayNameFor(model => model.OverviewModels.ToList()[0].Highlights.First().NameOfExpenditure)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.ToList()[0].Highlights.First().AmountOfExpenditure)
+                    @Html.DisplayNameFor(model => model.OverviewModels.ToList()[0].Highlights.First().AmountOfExpenditure)
                 </th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model.ToList()[0].Highlights)
+            @foreach (var item in Model.OverviewModels.ToList()[0].Highlights)
             {
                 <tr>
                     <td>
@@ -210,4 +232,10 @@ else
             }
         </tbody>
     </table>
+}
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
