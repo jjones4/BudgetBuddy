@@ -81,15 +81,23 @@ namespace BudgetBuddyUI.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(DashboardBudgetsTableModel dashboardBudgetsTableModel)
         {
+            // Figure out who is logged in, and get the AspNetUserId for identifying the user
+            // in the BudgetDataDb
+            var aspNetUserId = await _userManager.GetUserIdAsync(await _userManager.GetUserAsync(User));
+
+            SqlDataTranslator sqlDataTranslator = new SqlDataTranslator();
+
+            // Get the logged in user's Id from the BudgetDataDb
+            int loggedInUserId = await sqlDataTranslator.GetUserIdByAspNetUserId(aspNetUserId,
+                _config.GetConnectionString("BudgetDataDbConnectionString"));
+
             // Once the user has entered the name of their new budget, we need to check two things:
             // 1. If the user already has a budget with the same name (not allowed)
             // 2. If the new budget name already exists in the BudgetNames table (we don't need to add it)
             //    We just need to know the Id of the budget name that already exists.
 
-            SqlDataTranslator sqlDataTranslator = new SqlDataTranslator();
-
             List<BudgetNameModel> userBudgetNames = await sqlDataTranslator.GetBudgetNamesByLoggedInUserId(
-                dashboardBudgetsTableModel.UserId,
+                loggedInUserId,
                 _config.GetConnectionString("BudgetDataDbConnectionString"));
 
             // 1. If the user already has a budget with the same name (not allowed)
@@ -122,12 +130,12 @@ namespace BudgetBuddyUI.Controllers
                     if (dashboardBudgetsTableModel.IsDefaultBudget == true)
                     {
                         await sqlDataTranslator.ClearDefaultBudgetFlagsByUserId(
-                            dashboardBudgetsTableModel.UserId,
+                            loggedInUserId,
                             _config.GetConnectionString("BudgetDataDbConnectionString"));
                     }
 
                     await sqlDataTranslator.AddNewBudgetToUsersBudgetNamesTable(
-                        dashboardBudgetsTableModel.UserId,
+                        loggedInUserId,
                         budget.Id,
                         dashboardBudgetsTableModel.IsDefaultBudget,
                         dashboardBudgetsTableModel.Threshhold,

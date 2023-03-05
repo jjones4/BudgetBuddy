@@ -12,6 +12,15 @@
 @if (Model is null)
 {
     <p>You don't have any budgets to display.</p>
+
+    <br />
+
+    <form asp-action="Create" method="get" class="col-md-2">
+        <div class="form-group">
+            <input type="submit" value="Create a New Budget" class="btn btn-primary" />
+        </div>
+    </form>
+
 }
 else
 {

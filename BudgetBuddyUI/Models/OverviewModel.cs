@@ -26,19 +26,24 @@ namespace BudgetBuddyUI.Models
                 counter++;
             }
 
-            averageIncome = totalIncome / counter;
-            averageExpense = totalExpense / counter;
-            averageMargin = totalMargin / counter;
+            // The counter will be equal to zero if someone has a budget with no line
+            // items in it
+            if (counter != 0)
+            {
+                averageIncome = totalIncome / counter;
+                averageExpense = totalExpense / counter;
+                averageMargin = totalMargin / counter;
 
-            Totals.MonthName = "Total";
-            Totals.IncomeAmount = totalIncome;
-            Totals.ExpenseAmaount = totalExpense;
-            Totals.MarginAmount = totalMargin;
+                Totals.MonthName = "Total";
+                Totals.IncomeAmount = totalIncome;
+                Totals.ExpenseAmaount = totalExpense;
+                Totals.MarginAmount = totalMargin;
 
-            Averages.MonthName = "Average";
-            Averages.IncomeAmount = averageIncome;
-            Averages.ExpenseAmaount = averageExpense;
-            Averages.MarginAmount = averageMargin;
+                Averages.MonthName = "Average";
+                Averages.IncomeAmount = averageIncome;
+                Averages.ExpenseAmaount = averageExpense;
+                Averages.MarginAmount = averageMargin;
+            }
         }
 
         public List<MonthlySummaryModel> MonthlySummaries { get; set; } = new List<MonthlySummaryModel>();
