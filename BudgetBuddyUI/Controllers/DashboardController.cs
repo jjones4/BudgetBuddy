@@ -60,15 +60,45 @@ namespace BudgetBuddyUI.Controllers
                     });
             }
 
+            // Now, based on the logged in user Id, we need to get the user's
+            // templates, if any, from the UsersTemplateNames table
+            List<UsersTemplateNamesModel> usersTemplateNames =
+                await sqlDataTranslator.GetUsersTemplateNamesRowsByUserId(loggedInUserId,
+                _config.GetConnectionString("BudgetDataDbConnectionString"));
+
+            List<DashboardTemplatesTableModel> dashboardTemplatesTableModel = new List<DashboardTemplatesTableModel>();
+
+            foreach (UsersTemplateNamesModel utnm in usersTemplateNames)
+            {
+                string templateName = await sqlDataTranslator.GetTemplateNameById(utnm.TemplateNameId,
+                _config.GetConnectionString("BudgetDataDbConnectionString"));
+
+                dashboardTemplatesTableModel.Add(
+                    new DashboardTemplatesTableModel
+                    {
+                        Id = utnm.Id,
+                        UserId = utnm.UserId,
+                        TemplateName = templateName
+                    });
+            }
+
+            // TODO - figure out how to handle the situation where there are no budgets
+            // but there are templates, and vice versa.
             if (usersBudgetNames.Count == 0)
             {
                 return View();
             }
 
-            return View(dashboardBudgetsTableModel);
+            DashboardOverviewModel dashboardOverviewModel = new DashboardOverviewModel()
+            {
+                DashboardBudgetsTableModels = dashboardBudgetsTableModel,
+                DashboardTemplatesTableModels = dashboardTemplatesTableModel
+            };
+
+            return View(dashboardOverviewModel);
         }
 
-        public IActionResult Create(int userId)
+        public IActionResult CreateBudget(int userId)
         {
             DashboardBudgetsTableModel dashboardBudgetsTableModel = new DashboardBudgetsTableModel()
             {
@@ -79,7 +109,7 @@ namespace BudgetBuddyUI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(DashboardBudgetsTableModel dashboardBudgetsTableModel)
+        public async Task<IActionResult> CreateBudget(DashboardBudgetsTableModel dashboardBudgetsTableModel)
         {
             // Figure out who is logged in, and get the AspNetUserId for identifying the user
             // in the BudgetDataDb
@@ -302,12 +332,23 @@ namespace BudgetBuddyUI.Controllers
             return RedirectToAction("Index");
         }
 
-        public async Task<IActionResult> Delete(int budgetId)
+        public async Task<IActionResult> DeleteBudget(int budgetId)
         {
             SqlDataTranslator sqlDataTranslator = new SqlDataTranslator();
 
             await sqlDataTranslator.DeleteBudgetById(
                 budgetId,
+                _config.GetConnectionString("BudgetDataDbConnectionString"));
+
+            return RedirectToAction("Index");
+        }
+
+        public async Task<IActionResult> DeleteTemplate(int templateId)
+        {
+            SqlDataTranslator sqlDataTranslator = new SqlDataTranslator();
+
+            await sqlDataTranslator.DeleteTemplateById(
+                templateId,
                 _config.GetConnectionString("BudgetDataDbConnectionString"));
 
             return RedirectToAction("Index");

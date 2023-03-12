@@ -364,6 +364,39 @@ namespace BudgetBuddyLibrary
             return usersBudgetNames;
         }
 
+        public async Task<List<UsersTemplateNamesModel>> GetUsersTemplateNamesRowsByUserId(int userId, string connectionString)
+        {
+            SqlDataAccess sqlDataAccess = new SqlDataAccess();
+
+            StoredProcedureModel storedProcedure = new StoredProcedureModel()
+            {
+                NameOfStoredProcedure = "dbo.spUsersTemplateNames_GetAllRowsForGivenUserId",
+
+                SqlParameterList = new List<SqlParameter>()
+                {
+                    new SqlParameter("@UserId", SqlDbType.Int)
+                    {
+                        Value = userId
+                    }
+                }
+            };
+
+            List<object[]> rawSqlRows = await sqlDataAccess.Read<UsersTemplateNamesModel>(storedProcedure, connectionString);
+            List<UsersTemplateNamesModel> usersTemplateNames = new List<UsersTemplateNamesModel>();
+
+            foreach (object[] row in rawSqlRows)
+            {
+                usersTemplateNames.Add(new UsersTemplateNamesModel()
+                {
+                    Id = (int)row[0],
+                    UserId = (int)row[1],
+                    TemplateNameId = (int)row[2]
+                });
+            }
+
+            return usersTemplateNames;
+        }
+
         public async Task<List<DateModel>> GetDateRowsByDate(DateTime date, string connectionString)
         {
             SqlDataAccess sqlDataAccess = new SqlDataAccess();
@@ -654,6 +687,37 @@ namespace BudgetBuddyLibrary
             return budgetNames.First().BudgetName;
         }
 
+        public async Task<string> GetTemplateNameById(int templateNameId, string connectionString)
+        {
+            SqlDataAccess sqlDataAccess = new SqlDataAccess();
+
+            StoredProcedureModel storedProcedure = new StoredProcedureModel()
+            {
+                NameOfStoredProcedure = "dbo.spTemplateNames_GetTemplateNameById",
+
+                SqlParameterList = new List<SqlParameter>()
+                {
+                    new SqlParameter("@Id", SqlDbType.Int)
+                    {
+                        Value = templateNameId
+                    }
+                }
+            };
+
+            List<object[]> rawSqlRows = await sqlDataAccess.Read<TemplateNameModel>(storedProcedure, connectionString);
+            List<TemplateNameModel> templateNames = new List<TemplateNameModel>();
+
+            foreach (object[] row in rawSqlRows)
+            {
+                templateNames.Add(new TemplateNameModel()
+                {
+                    TemplateName = (string)row[0]
+                });
+            }
+
+            return templateNames.First().TemplateName;
+        }
+
         public async Task<int> UpdateLineItemInBudgetsTable(int lineItemId,
             int dateId,
             int amountId,
@@ -795,6 +859,29 @@ namespace BudgetBuddyLibrary
                     new SqlParameter("@Id", SqlDbType.Int)
                     {
                         Value = budgetId
+                    }
+                }
+            };
+
+            int numRowsAffected = await sqlDataAccess.Delete(storedProcedure, connectionString);
+
+            return numRowsAffected;
+        }
+
+        public async Task<int> DeleteTemplateById(int templateId,
+            string connectionString)
+        {
+            SqlDataAccess sqlDataAccess = new SqlDataAccess();
+
+            StoredProcedureModel storedProcedure = new StoredProcedureModel()
+            {
+                NameOfStoredProcedure = "dbo.spTemplates_DeleteById",
+
+                SqlParameterList = new List<SqlParameter>()
+                {
+                    new SqlParameter("@Id", SqlDbType.Int)
+                    {
+                        Value = templateId
                     }
                 }
             };

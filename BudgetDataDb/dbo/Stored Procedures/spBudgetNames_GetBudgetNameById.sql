@@ -1,6 +1,7 @@
 ﻿CREATE PROCEDURE [dbo].[spBudgetNames_GetBudgetNameById]
 
 	@Id int
+
 AS
 
 	SELECT BudgetName

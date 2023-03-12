@@ -59,20 +59,36 @@ namespace BudgetBuddyUI.Controllers
             // and also leave the list empty so we can check this later
             if (defaultBudgetId > 0)
             {
-                List<LineItemModel> defaultLineItems;
-
-                defaultLineItems =
+                List<LineItemModel> defaultLineItems =
                     await sqlDataTranslator.GetLineItemsByUserBudgetId(defaultBudgetId,
                     _config.GetConnectionString("BudgetDataDbConnectionString"));
 
-                List<LineItemModel> creditLineItems = 
-                    defaultLineItems.Where(x => x.IsCredit == true && x.AmountOfTransaction < defaultBudgetThreshhold).ToList();
+                List<LineItemModel> creditLineItems = new List<LineItemModel>();
+
+                if (defaultBudgetThreshhold is null)
+                {
+                    creditLineItems =
+                        defaultLineItems.Where(x => x.IsCredit == true).ToList();
+                }
+                else
+                {
+                    creditLineItems =
+                        defaultLineItems.Where(x => x.IsCredit == true && x.AmountOfTransaction < defaultBudgetThreshhold).ToList();
+                }
 
                 List<PartialOverviewLineModel> creditPartialOverview = 
                     OverviewCalculator.SumsByMonth(creditLineItems);
 
-                List<LineItemModel> debitLineItems = 
-                    defaultLineItems.Where(x => x.IsCredit == false && x.AmountOfTransaction < defaultBudgetThreshhold).ToList();
+                List<LineItemModel> debitLineItems = new List<LineItemModel>();
+
+                if (defaultBudgetThreshhold is null)
+                {
+                    debitLineItems = defaultLineItems.Where(x => x.IsCredit == false).ToList();
+                }
+                else
+                {
+                    debitLineItems = defaultLineItems.Where(x => x.IsCredit == false && x.AmountOfTransaction < defaultBudgetThreshhold).ToList();
+                }
 
                 List<PartialOverviewLineModel> debitPartialOverview = 
                     OverviewCalculator.SumsByMonth(debitLineItems);
@@ -205,19 +221,37 @@ namespace BudgetBuddyUI.Controllers
             // and also leave the list empty so we can check this later
             if (defaultBudgetId > 0)
             {
-                List<LineItemModel> defaultLineItems;
-
-                defaultLineItems =
+                List<LineItemModel> defaultLineItems =
                     await sqlDataTranslator.GetLineItemsByUserBudgetId(defaultBudgetId,
                     _config.GetConnectionString("BudgetDataDbConnectionString"));
 
-                List<LineItemModel> creditLineItems =
-                    defaultLineItems.Where(x => x.IsCredit == true && x.AmountOfTransaction < defaultBudgetThreshhold).ToList();
+                List<LineItemModel> creditLineItems = new List<LineItemModel>();
+
+                if (defaultBudgetThreshhold is null)
+                {
+                    creditLineItems =
+                        defaultLineItems.Where(x => x.IsCredit == true).ToList();
+                }
+                else
+                {
+                    creditLineItems =
+                        defaultLineItems.Where(x => x.IsCredit == true && x.AmountOfTransaction < defaultBudgetThreshhold).ToList();
+                }
+
                 List<PartialOverviewLineModel> creditPartialOverview =
                     OverviewCalculator.SumsByMonth(creditLineItems);
 
-                List<LineItemModel> debitLineItems =
-                    defaultLineItems.Where(x => x.IsCredit == false && x.AmountOfTransaction < defaultBudgetThreshhold).ToList();
+                List<LineItemModel> debitLineItems = new List<LineItemModel>();
+
+                if (defaultBudgetThreshhold is null)
+                {
+                    debitLineItems = defaultLineItems.Where(x => x.IsCredit == false).ToList();
+                }
+                else
+                {
+                    debitLineItems = defaultLineItems.Where(x => x.IsCredit == false && x.AmountOfTransaction < defaultBudgetThreshhold).ToList();
+                }
+
                 List<PartialOverviewLineModel> debitPartialOverview =
                     OverviewCalculator.SumsByMonth(debitLineItems);
 

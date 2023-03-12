@@ -90,5 +90,8 @@
     <Build Include="dbo\Stored Procedures\spBudgets_GetLineItemById.sql" />
     <Build Include="dbo\Stored Procedures\spUsersBudgetNames_UpdateById.sql" />
     <Build Include="dbo\Stored Procedures\spBudgets_DeleteById.sql" />
+    <Build Include="dbo\Stored Procedures\spUsersTemplateNames_GetAllRowsForGivenUserId.sql" />
+    <Build Include="dbo\Stored Procedures\spTemplateNames_GetTemplateNameById.sql" />
+    <Build Include="dbo\Stored Procedures\spTemplates_DeleteById.sql" />
   </ItemGroup>
 </Project>

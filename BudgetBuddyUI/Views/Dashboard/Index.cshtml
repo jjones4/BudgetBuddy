@@ -1,4 +1,4 @@
-﻿@model IEnumerable<DashboardBudgetsTableModel>
+﻿@model DashboardOverviewModel
 @{
     ViewData["Title"] = "Dashboard";
 }
@@ -15,7 +15,7 @@
 
     <br />
 
-    <form asp-action="Create" method="get" class="col-md-2">
+    <form asp-action="CreateBudget" method="get" class="col-md-2">
         <div class="form-group">
             <input type="submit" value="Create a New Budget" class="btn btn-primary" />
         </div>
@@ -24,31 +24,33 @@
 }
 else
 {
-    <form asp-action="Create" method="get" class="col-md-2">
+    <h3>Your Budgets</h3>
+
+    <br />
+
+    <form asp-action="CreateBudget" method="get" class="col-md-2">
         <div class="form-group">
-            <input type="hidden" name="userId" value="@Model.First().UserId" />
+            <input type="hidden" name="userId" value="@Model.DashboardBudgetsTableModels.First().UserId" />
             <input type="submit" value="Create a New Budget" class="btn btn-primary" />
         </div>
     </form>
 
     <br />
 
-    <h3>Your Budgets</h3>
-
     <table class="table table-striped w-auto">
         <thead class="thead-dark">
             <tr>
                 <th>
-                    @Html.DisplayNameFor(model => model.Id)
+                    @Html.DisplayNameFor(model => model.DashboardBudgetsTableModels.First().Id)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.BudgetName)
+                    @Html.DisplayNameFor(model => model.DashboardBudgetsTableModels.First().BudgetName)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.IsDefaultBudget)
+                    @Html.DisplayNameFor(model => model.DashboardBudgetsTableModels.First().IsDefaultBudget)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Threshhold)
+                    @Html.DisplayNameFor(model => model.DashboardBudgetsTableModels.First().Threshhold)
                 </th>
                 <th>
                 </th>
@@ -57,7 +59,7 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model.ToList())
+            @foreach (var item in Model.DashboardBudgetsTableModels.ToList())
             {
                 <tr>
                     <td>
@@ -84,7 +86,7 @@ else
                         </form>
                     </td>
                     <td>
-                        <form asp-action="Delete" method="get" class="col-md-2">
+                        <form asp-action="DeleteBudget" method="get" class="col-md-2">
                             <div class="form-group">
                                 <input type="hidden" name="budgetId" value="@item.Id" />
                                 <input type="submit" value="Delete" class="btn btn-primary" />
@@ -98,8 +100,67 @@ else
 
     <br />
 
+    <!-- Templates section -->
     <h3>Your Templates</h3>
 
+    <br />
+
+    <form asp-action="CreateTemplate" method="get" class="col-md-2">
+        <div class="form-group">
+            <input type="hidden" name="userId" value="@Model.DashboardBudgetsTableModels.First().UserId" />
+            <input type="submit" value="Create a New Template" class="btn btn-primary" />
+        </div>
+    </form>
+
+    <br />
+
+    <table class="table table-striped w-auto">
+        <thead class="thead-dark">
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.DashboardTemplatesTableModels.First().Id)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.DashboardTemplatesTableModels.First().TemplateName)
+                </th>
+                <th>
+                </th>
+                <th>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.DashboardTemplatesTableModels.ToList())
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Id)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TemplateName)
+                    </td>
+                    <td>
+                        <form asp-action="EditTemplateName" method="get" class="col-md-2">
+                            <div class="form-group">
+                                <input type="hidden" name="templateId" value="@item.Id" />
+                                <input type="hidden" name="userId" value="DashboardBudgetsTableModels.First().UserId" />
+                                <input type="hidden" name="budgetName" value="@item.TemplateName" />
+                                <input type="submit" value="Edit" class="btn btn-primary" />
+                            </div>
+                        </form>
+                    </td>
+                    <td>
+                        <form asp-action="DeleteTemplate" method="get" class="col-md-2">
+                            <div class="form-group">
+                                <input type="hidden" name="templateId" value="@item.Id" />
+                                <input type="submit" value="Delete" class="btn btn-primary" />
+                            </div>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 }
 
 @section Scripts {
